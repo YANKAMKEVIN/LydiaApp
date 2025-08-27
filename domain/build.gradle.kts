@@ -37,19 +37,33 @@ android {
 
 dependencies {
 
-    //Hilt
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    //Paging
+    // Paging
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.runtime)
+    testImplementation(libs.androidx.paging.testing)
 
+    // Robolectric
+    testImplementation(libs.robolectric)
+
+    // AndroidX & Material
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Tests
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+
+    // Instrumentation tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
