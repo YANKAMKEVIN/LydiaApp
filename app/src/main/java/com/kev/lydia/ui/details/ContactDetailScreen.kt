@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
@@ -34,26 +35,37 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.kev.domain.model.Contact
+import kotlin.math.absoluteValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float) {
-    val avatarScale by animateFloatAsState(targetValue = 1f - 0.2f * kotlin.math.abs(pageOffset))
-    val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.5f * kotlin.math.abs(pageOffset))
-    val infoOffset by animateDpAsState(targetValue = (50 * pageOffset).dp)
+    val avatarScale by animateFloatAsState(targetValue = 1f - 0.25f * kotlin.math.abs(pageOffset))
+    val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.6f * kotlin.math.abs(pageOffset))
+    val infoOffsetX by animateDpAsState(targetValue = (50 * pageOffset).dp)
     val infoAlpha by animateFloatAsState(targetValue = 1f - 0.5f * kotlin.math.abs(pageOffset))
+
+    val bgColor by remember {
+        derivedStateOf {
+            if (pageOffset.absoluteValue < 0.5f) Color(0xFFE0F7FA) else Color(0xFFFFF3E0)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -61,7 +73,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
                 title = { Text(contact.fullName, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent)
@@ -73,7 +85,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(listOf(Color(0xFFE0F7FA), Color(0xFFFFFFFF)))
+                    Brush.verticalGradient(listOf(bgColor, Color.White))
                 )
                 .padding(paddingValues)
         ) {
@@ -88,9 +100,11 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
                     model = contact.avatarUrl,
                     contentDescription = "Avatar",
                     modifier = Modifier
-                        .size((140 * avatarScale).dp)
+                        .size((150 * avatarScale).dp)
+                        .scale(avatarScale)
                         .clip(CircleShape)
                         .alpha(avatarAlpha)
+                        .shadow(10.dp, CircleShape)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -99,15 +113,15 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
                     text = contact.fullName,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.alpha(avatarAlpha)
+                    modifier = Modifier.alpha(avatarAlpha).scale(1f - 0.15f * pageOffset.absoluteValue)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Infos avec slide + fade
                 Column(
                     modifier = Modifier
-                        .offset(x = infoOffset)
+                        .offset(x = infoOffsetX)
                         .alpha(infoAlpha)
                 ) {
                     ContactInfoRow(icon = Icons.Default.Email, info = contact.email)
