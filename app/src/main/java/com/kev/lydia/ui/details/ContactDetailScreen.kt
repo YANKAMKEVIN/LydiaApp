@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.details
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,8 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
@@ -28,16 +26,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -46,6 +39,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -55,28 +49,28 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float) {
-    val avatarScale by animateFloatAsState(targetValue = 1f - 0.25f * kotlin.math.abs(pageOffset))
-    val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.6f * kotlin.math.abs(pageOffset))
+fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float, bgColor: Color) {
+    val avatarScale by animateFloatAsState(targetValue = 1f - 0.2f * pageOffset.absoluteValue)
+    val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.6f * pageOffset.absoluteValue)
     val infoOffsetX by animateDpAsState(targetValue = (50 * pageOffset).dp)
-    val infoAlpha by animateFloatAsState(targetValue = 1f - 0.5f * kotlin.math.abs(pageOffset))
+    val infoAlpha by animateFloatAsState(targetValue = 1f - 0.5f * pageOffset.absoluteValue)
+    val titleScale by animateFloatAsState(targetValue = 1f + 0.2f * (1f - pageOffset.absoluteValue))
 
-    val bgColor by remember {
-        derivedStateOf {
-            if (pageOffset.absoluteValue < 0.5f) Color(0xFFE0F7FA) else Color(0xFFFFF3E0)
-        }
-    }
+    val animatedBg = Brush.verticalGradient(
+        colors = listOf(
+            bgColor.copy(alpha = 0.8f + 0.2f * (1f - pageOffset.absoluteValue)),
+            Color.White
+        )
+    )
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(contact.fullName, fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent)
+            ContactDetailTopBar(
+                contact = contact,
+                onBack = onBack,
+                onCall = {},
+                onEmail = {},
+                onShare = {}
             )
         },
         containerColor = Color.Transparent
@@ -85,7 +79,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(listOf(bgColor, Color.White))
+                    animatedBg
                 )
                 .padding(paddingValues)
         ) {
@@ -113,59 +107,69 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float)
                     text = contact.fullName,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.alpha(avatarAlpha).scale(1f - 0.15f * pageOffset.absoluteValue)
+                    modifier = Modifier
+                        .alpha(avatarAlpha)
+                        .scale(1f - 0.15f * pageOffset.absoluteValue)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Infos avec slide + fade
+                val infoList = listOf(
+                    Pair(Icons.Filled.Email, contact.email),
+                    Pair(Icons.Filled.Phone, contact.phone),
+                    Pair(Icons.Filled.LocationOn, "${contact.city}, ${contact.country}")
+                )
                 Column(
                     modifier = Modifier
                         .offset(x = infoOffsetX)
-                        .alpha(infoAlpha)
                 ) {
-                    ContactInfoRow(icon = Icons.Default.Email, info = contact.email)
-                    ContactInfoRow(icon = Icons.Default.Phone, info = contact.phone)
-                    ContactInfoRow(
-                        icon = Icons.Default.LocationOn,
-                        info = "${contact.city}, ${contact.country}"
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    InfoCard(title = "Age", value = contact.age.toString())
-                    InfoCard(title = "Registered", value = contact.registeredDate)
+                    infoList.forEachIndexed { index, (icon, info) ->
+                        val alpha by animateFloatAsState(
+                            targetValue = if (pageOffset.absoluteValue < 0.5f) 1f else 0f
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        ContactInfoRow(icon, info, alpha)
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+                InfoCard(title = "Age", value = contact.age.toString())
+                InfoCard(title = "Registered", value = contact.registeredDate)
             }
         }
     }
 }
 
 @Composable
-fun ContactInfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, info: String) {
+fun ContactInfoRow(icon: ImageVector, info: String, alpha: Float) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .alpha(alpha)
     ) {
         Icon(icon, contentDescription = null, tint = Color(0xFF00796B))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(info, style = MaterialTheme.typography.bodyLarge)
+        Text(info, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
     }
 }
 
 @Composable
 fun InfoCard(title: String, value: String) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F2F1))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F2F1)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontWeight = FontWeight.Medium, color = Color(0xFF00796B))
             Spacer(modifier = Modifier.height(4.dp))
-            Text(value, fontWeight = FontWeight.Bold)
+            Text(value, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
