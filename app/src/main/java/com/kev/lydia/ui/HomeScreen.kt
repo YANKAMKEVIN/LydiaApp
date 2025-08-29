@@ -22,61 +22,86 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kev.domain.model.Contact
+import com.kev.lydia.ui.details.ContactDetailPager
+
 
 @Composable
-fun HomeRoute(
-    viewModel: HomeViewModel = hiltViewModel(),
-    onContactClick: (Contact) -> Unit
-) {
-    val contacts = viewModel.contacts.collectAsLazyPagingItems()
-    var searchQuery by remember { mutableStateOf("") }
-    var isSearching by remember { mutableStateOf(false) }
+fun HomeRoute(viewModel: HomeViewModel = hiltViewModel()) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            val contacts = viewModel.contacts.collectAsLazyPagingItems()
+            var searchQuery by remember { mutableStateOf("") }
+            var isSearching by remember { mutableStateOf(false) }
 
-    HomeScreen(
-        contacts = contacts,
-        onContactClick = onContactClick,
-        userAvatarUrl = "https://example.com/avatar.jpg",
-        searchQuery = searchQuery,
-        isSearching = isSearching,
-        onSearchQueryChange = { searchQuery = it },
-        onFilterClick = { /* open filter bottom sheet */ },
-        onSearchToggle = {
-            if (isSearching) searchQuery = ""
-            isSearching = !isSearching
+            HomeScreen(
+                contacts = contacts,
+                searchQuery = searchQuery,
+                isSearching = isSearching,
+                onSearchQueryChange = { searchQuery = it },
+                onSearchToggle = {
+                    if (isSearching) searchQuery = ""
+                    isSearching = !isSearching
+                },
+                onContactClick = { clickedContact, filteredList ->
+                    val index = filteredList.indexOf(clickedContact)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "contacts",
+                        filteredList
+                    )
+                    navController.navigate("detail/$index")
+                }
+            )
         }
-    )
+
+        composable(
+            "detail/{startIndex}",
+            arguments = listOf(navArgument("startIndex") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val startIndex = backStackEntry.arguments?.getInt("startIndex") ?: 0
+            val contacts: List<Contact> =
+                navController.previousBackStackEntry?.savedStateHandle?.get("contacts")
+                    ?: emptyList()
+            ContactDetailPager(
+                contacts = contacts,
+                startIndex = startIndex,
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
 }
 
 @Composable
 fun HomeScreen(
     contacts: LazyPagingItems<Contact>,
-    onContactClick: (Contact) -> Unit,
-    userAvatarUrl: String,
     searchQuery: String,
-    onSearchQueryChange: (String) -> Unit,
-    onFilterClick: () -> Unit,
     isSearching: Boolean,
-    onSearchToggle: () -> Unit
+    onSearchQueryChange: (String) -> Unit,
+    onSearchToggle: () -> Unit,
+    onContactClick: (Contact, List<Contact>) -> Unit
 ) {
     Scaffold(
         topBar = {
             HomeTopBar(
-                userAvatarUrl = userAvatarUrl,
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
-                onFilterClick = onFilterClick,
+                onFilterClick = { },
                 isSearching = isSearching,
                 onSearchToggle = onSearchToggle,
                 isFilterActive = true
 
             )
         },
-        bottomBar = {
-        }
+        bottomBar = {}
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -112,20 +137,19 @@ fun HomeScreen(
                 contacts.itemCount == 0 -> EmptyScreen()
 
                 else -> {
-                    if (searchQuery.isBlank()) {
-                        ContactList(
-                            contacts = contacts,
-                            onContactClick = onContactClick
-                        )
-                    } else {
-                        val filtered = contacts.itemSnapshotList.items
-                            .filterNotNull()
-                            .filter { it.fullName.contains(searchQuery, ignoreCase = true) }
 
-                        ContactListStatic(
-                            contacts = filtered,
-                            onContactClick = onContactClick
-                        )
+                    val filteredList = contacts.itemSnapshotList.items
+                        .filterNotNull()
+                        .filter {
+                            if (searchQuery.isBlank()) true
+                            else it.fullName.contains(searchQuery, ignoreCase = true)
+                        }
+                    LazyColumn {
+                        items(filteredList.size) { contact ->
+                            ContactCard(contact = filteredList[contact]) {
+                                onContactClick(filteredList[contact], filteredList)
+                            }
+                        }
                     }
                 }
             }
@@ -166,15 +190,15 @@ private fun HomeScreenPreview() {
         )
     )
 
-    HomeScreen(
-        contacts = fakeContacts.toPagingItems(),
-        onContactClick = {},
-        userAvatarUrl = "https://example.com/avatar.jpg",
-        searchQuery = "",
-        onSearchQueryChange = {},
-        onFilterClick = {},
-        isSearching = false,
-        onSearchToggle = {}
-    )
+    /* HomeScreen(
+         contacts = fakeContacts.toPagingItems(),
+         onContactClick = {},
+         userAvatarUrl = "https://example.com/avatar.jpg",
+         searchQuery = "",
+         onSearchQueryChange = {},
+         onFilterClick = {},
+         isSearching = false,
+         onSearchToggle = {}
+     )*/
 }
 

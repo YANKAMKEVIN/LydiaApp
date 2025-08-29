@@ -10,9 +10,9 @@ import com.kev.domain.model.Contact
 fun MainContent(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
         HomeRoute(
-            onContactClick = { contact: Contact ->
+            /*onContactClick = { contact: Contact ->
                 // TODO: Navigation vers l'écran détail du contact
-            }
+            }*/
         )
     }
 }
