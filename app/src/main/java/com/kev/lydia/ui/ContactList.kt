@@ -57,3 +57,19 @@ fun ContactList(
         }
     }
 }
+
+@Composable
+fun ContactListStatic(
+    contacts: List<Contact>,
+    onContactClick: (Contact) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(contacts, key = { it.id }) { contact ->
+            ContactCard(contact = contact, onClick = { onContactClick(contact) })
+        }
+    }
+}

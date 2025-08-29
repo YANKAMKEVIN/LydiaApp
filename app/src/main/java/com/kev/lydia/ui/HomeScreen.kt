@@ -34,14 +34,20 @@ fun HomeRoute(
 ) {
     val contacts = viewModel.contacts.collectAsLazyPagingItems()
     var searchQuery by remember { mutableStateOf("") }
+    var isSearching by remember { mutableStateOf(false) }
 
     HomeScreen(
         contacts = contacts,
         onContactClick = onContactClick,
         userAvatarUrl = "https://example.com/avatar.jpg",
         searchQuery = searchQuery,
+        isSearching = isSearching,
         onSearchQueryChange = { searchQuery = it },
-        onFilterClick = { /* open filter bottom sheet */ }
+        onFilterClick = { /* open filter bottom sheet */ },
+        onSearchToggle = {
+            if (isSearching) searchQuery = ""
+            isSearching = !isSearching
+        }
     )
 }
 
@@ -52,10 +58,10 @@ fun HomeScreen(
     userAvatarUrl: String,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
+    isSearching: Boolean,
+    onSearchToggle: () -> Unit
 ) {
-    var isSearching by remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             HomeTopBar(
@@ -63,9 +69,13 @@ fun HomeScreen(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 onFilterClick = onFilterClick,
-                onSearchToggle = { isSearching = !isSearching },
-                isSearching = isSearching
+                isSearching = isSearching,
+                onSearchToggle = onSearchToggle,
+                isFilterActive = true
+
             )
+        },
+        bottomBar = {
         }
     ) { paddingValues ->
         Box(
@@ -100,7 +110,24 @@ fun HomeScreen(
                 }
 
                 contacts.itemCount == 0 -> EmptyScreen()
-                else -> ContactList(contacts = contacts, onContactClick = onContactClick)
+
+                else -> {
+                    if (searchQuery.isBlank()) {
+                        ContactList(
+                            contacts = contacts,
+                            onContactClick = onContactClick
+                        )
+                    } else {
+                        val filtered = contacts.itemSnapshotList.items
+                            .filterNotNull()
+                            .filter { it.fullName.contains(searchQuery, ignoreCase = true) }
+
+                        ContactListStatic(
+                            contacts = filtered,
+                            onContactClick = onContactClick
+                        )
+                    }
+                }
             }
         }
     }
@@ -118,7 +145,7 @@ private fun HomeScreenPreview() {
             gender = "male",
             email = "john@example.com",
             phone = "123456789",
-            avatarUrl = "http://example.com/avatar.jpg",
+            avatarUrl = "https://example.com/avatar.jpg",
             city = "Paris",
             country = "France",
             age = 30,
@@ -131,7 +158,7 @@ private fun HomeScreenPreview() {
             gender = "female",
             email = "jane@example.com",
             phone = "987654321",
-            avatarUrl = "http://example.com/avatar2.jpg",
+            avatarUrl = "https://example.com/avatar2.jpg",
             city = "Lyon",
             country = "France",
             age = 28,
@@ -145,7 +172,9 @@ private fun HomeScreenPreview() {
         userAvatarUrl = "https://example.com/avatar.jpg",
         searchQuery = "",
         onSearchQueryChange = {},
-        onFilterClick = {}
+        onFilterClick = {},
+        isSearching = false,
+        onSearchToggle = {}
     )
 }
 
