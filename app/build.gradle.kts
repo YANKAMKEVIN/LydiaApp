@@ -73,6 +73,8 @@ dependencies {
     //Coil
     implementation(libs.coil)
 
+    implementation(libs.androidx.material.icons.extended)
+
     implementation(project(":data"))
     implementation(project(":domain"))
 }

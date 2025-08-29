@@ -1,25 +1,141 @@
 package com.kev.lydia.ui
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.kev.lydia.ui.theme.LydiaTheme
 
-// ------------------------- TopBar -------------------------
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar() {
-    TopAppBar(
-        title = { Text("Contacts", fontWeight = FontWeight.Bold) },
-        actions = {
-            IconButton(onClick = { /* TODO: Search action */ }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
+fun HomeTopBar(
+    userAvatarUrl: String,
+    searchQuery: String = "",
+    isSearching: Boolean = false,
+    onSearchQueryChange: (String) -> Unit,
+    onSearchToggle: () -> Unit,
+    onFilterClick: () -> Unit,
+    isFilterActive: Boolean = true
+) {
+    Surface(
+        tonalElevation = 8.dp,
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Crossfade(targetState = isSearching, label = "SearchCrossfade") { searching ->
+                if (searching) {
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = onSearchQueryChange,
+                        placeholder = { Text("Search contacts") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color(0xFFF0F0F0),
+                            unfocusedContainerColor = Color(0xFFF0F0F0),
+                            cursorColor = Color.Black,
+                        )
+                    )
+                } else {
+
+                    Image(
+                        painter = rememberAsyncImagePainter(userAvatarUrl),
+                        contentDescription = "User Avatar",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = "Contacts",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+
+            IconButton(onClick = onSearchToggle) {
+                Icon(
+                    imageVector = if (isSearching) Icons.Default.Close else Icons.Default.Search,
+                    contentDescription = if (isSearching) "Close Search" else "Search"
+                )
+            }
+
+            Box {
+                IconButton(onClick = onFilterClick) {
+                    Icon(
+                        imageVector = Icons.Default.Filter,
+                        contentDescription = "Filter"
+                    )
+                }
+
+                if (isFilterActive) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .background(Color.Red, CircleShape)
+                            .align(Alignment.TopEnd)
+                            .offset(x = 4.dp, y = (-4).dp)
+                    )
+                }
             }
         }
-    )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeTopBarPreview() {
+    LydiaTheme {
+        HomeTopBar(
+            userAvatarUrl = "https://randomuser.me/api/portraits/men/1.jpg",
+            searchQuery = "Jane Doe",
+            onSearchQueryChange = {},
+            onFilterClick = {},
+            isFilterActive = true,
+            onSearchToggle = {}
+        )
+    }
 }
