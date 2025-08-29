@@ -1,5 +1,7 @@
-package com.kev.lydia.ui.details
+package com.kev.lydia.ui
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -41,9 +46,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.kev.domain.model.Contact
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactDetailScreen(contact: Contact, onBack: () -> Unit) {
+fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float) {
+    val avatarScale by animateFloatAsState(targetValue = 1f - 0.2f * kotlin.math.abs(pageOffset))
+    val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.5f * kotlin.math.abs(pageOffset))
+    val infoOffset by animateDpAsState(targetValue = (50 * pageOffset).dp)
+    val infoAlpha by animateFloatAsState(targetValue = 1f - 0.5f * kotlin.math.abs(pageOffset))
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,9 +64,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent)
             )
         },
         containerColor = Color.Transparent
@@ -64,9 +73,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE0F7FA), Color(0xFFFFFFFF))
-                    )
+                    Brush.verticalGradient(listOf(Color(0xFFE0F7FA), Color(0xFFFFFFFF)))
                 )
                 .padding(paddingValues)
         ) {
@@ -81,8 +88,9 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit) {
                     model = contact.avatarUrl,
                     contentDescription = "Avatar",
                     modifier = Modifier
-                        .size(140.dp)
+                        .size((140 * avatarScale).dp)
                         .clip(CircleShape)
+                        .alpha(avatarAlpha)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -90,20 +98,28 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit) {
                 Text(
                     text = contact.fullName,
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.alpha(avatarAlpha)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                ContactInfoRow(icon = Icons.Default.Email, info = contact.email)
-                ContactInfoRow(icon = Icons.Default.Phone, info = contact.phone)
-                ContactInfoRow(icon = Icons.Default.LocationOn, info = "${contact.city}, ${contact.country}")
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Ici tu peux ajouter plus de sections "wahou", comme date d'inscription, âge, etc.
-                InfoCard(title = "Age", value = contact.age.toString())
-                InfoCard(title = "Registered", value = contact.registeredDate)
+                // Infos avec slide + fade
+                Column(
+                    modifier = Modifier
+                        .offset(x = infoOffset)
+                        .alpha(infoAlpha)
+                ) {
+                    ContactInfoRow(icon = Icons.Default.Email, info = contact.email)
+                    ContactInfoRow(icon = Icons.Default.Phone, info = contact.phone)
+                    ContactInfoRow(
+                        icon = Icons.Default.LocationOn,
+                        info = "${contact.city}, ${contact.country}"
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    InfoCard(title = "Age", value = contact.age.toString())
+                    InfoCard(title = "Registered", value = contact.registeredDate)
+                }
             }
         }
     }
