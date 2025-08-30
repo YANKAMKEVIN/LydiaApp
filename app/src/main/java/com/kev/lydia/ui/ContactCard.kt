@@ -30,7 +30,6 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.kev.domain.model.Contact
 
-// ------------------------- ContactCard -------------------------
 @Composable
 fun ContactCard(
     contact: Contact,

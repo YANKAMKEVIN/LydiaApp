@@ -28,7 +28,6 @@ import com.kev.lydia.ui.theme.LydiaTheme
 
 @Composable
 fun HomeTopBar(
-    userAvatarUrl: String,
     searchQuery: String = "",
     isSearching: Boolean = false,
     onSearchQueryChange: (String) -> Unit,
@@ -110,7 +109,6 @@ fun HomeTopBar(
 private fun HomeTopBarPreview() {
     LydiaTheme {
         HomeTopBar(
-            userAvatarUrl = "https://randomuser.me/api/portraits/men/1.jpg",
             searchQuery = "Jane Doe",
             onSearchQueryChange = {},
             onFilterClick = {},
