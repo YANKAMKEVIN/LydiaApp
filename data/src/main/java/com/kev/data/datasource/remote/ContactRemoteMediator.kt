@@ -48,7 +48,7 @@ class ContactRemoteMediator @Inject constructor(
                     val contacts = networkResult.data.results
                     val infoPage = networkResult.data.info.page
                     contactDatabase.withTransaction {
-                        if (loadType == LoadType.REFRESH) {
+                        if (loadType == LoadType.REFRESH && contacts.isNotEmpty()) {
                             contactDao.clearAll()
                             keysDao.clearRemoteKeys()
                         }
@@ -70,7 +70,7 @@ class ContactRemoteMediator @Inject constructor(
                 is NetworkResponse.Failure -> {
                     when (val error = networkResult.error) {
                         is NetworkError.UnResolveAddress ->
-                            MediatorResult.Error(Exception("No network connection"))
+                            MediatorResult.Success(endOfPaginationReached = false)
 
                         else ->
                             MediatorResult.Error(Exception("Network error: ${error.message}"))
@@ -78,7 +78,7 @@ class ContactRemoteMediator @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            MediatorResult.Error(e)
+            MediatorResult.Success(endOfPaginationReached = false)
         }
     }
 }
