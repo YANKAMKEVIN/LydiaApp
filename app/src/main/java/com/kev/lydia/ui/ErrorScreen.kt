@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// ------------------------- Error -------------------------
 @Composable
 fun ErrorScreen(message: String, onRetry: () -> Unit) {
     Box(

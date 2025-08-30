@@ -1,31 +1,25 @@
 package com.kev.lydia.ui.details
 
+import android.content.Intent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,9 +33,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.kev.domain.model.Contact
 import kotlin.math.absoluteValue
@@ -50,11 +45,11 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float, bgColor: Color) {
+    val context = LocalContext.current
+
     val avatarScale by animateFloatAsState(targetValue = 1f - 0.2f * pageOffset.absoluteValue)
     val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.6f * pageOffset.absoluteValue)
     val infoOffsetX by animateDpAsState(targetValue = (50 * pageOffset).dp)
-    val infoAlpha by animateFloatAsState(targetValue = 1f - 0.5f * pageOffset.absoluteValue)
-    val titleScale by animateFloatAsState(targetValue = 1f + 0.2f * (1f - pageOffset.absoluteValue))
 
     val animatedBg = Brush.verticalGradient(
         colors = listOf(
@@ -67,10 +62,33 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
         topBar = {
             ContactDetailTopBar(
                 contact = contact,
+                pageOffset = pageOffset,
                 onBack = onBack,
-                onCall = {},
-                onEmail = {},
-                onShare = {}
+                onCall = {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = "tel:${contact.phone}".toUri()
+                    }
+                    context.startActivity(intent)
+                },
+                onEmail = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = "mailto:${contact.email}".toUri()
+                        putExtra(Intent.EXTRA_SUBJECT, "Bonjour ${contact.fullName}")
+                        putExtra(Intent.EXTRA_TEXT, "Je vous contacte au sujet de...")
+                    }
+                    context.startActivity(intent)
+                },
+                onShare = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, "Contact: ${contact.fullName}")
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            "Voici le contact de ${contact.fullName} : ${contact.phone}, ${contact.email}"
+                        )
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Partager le contact"))
+                }
             )
         },
         containerColor = Color.Transparent
@@ -141,35 +159,4 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
     }
 }
 
-@Composable
-fun ContactInfoRow(icon: ImageVector, info: String, alpha: Float) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .alpha(alpha)
-    ) {
-        Icon(icon, contentDescription = null, tint = Color(0xFF00796B))
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(info, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-    }
-}
 
-@Composable
-fun InfoCard(title: String, value: String) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F2F1)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontWeight = FontWeight.Medium, color = Color(0xFF00796B))
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(value, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
-        }
-    }
-}
