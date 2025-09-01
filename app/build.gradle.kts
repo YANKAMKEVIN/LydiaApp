@@ -60,10 +60,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //Lottie
+    implementation(libs.lottie.compose)
+
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Paging
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime)
+    testImplementation(libs.androidx.paging.testing)
+
+    //Coil
+    implementation(libs.coil)
+
+    implementation(libs.androidx.material.icons.extended)
 
     implementation(project(":data"))
     implementation(project(":domain"))
