@@ -1,5 +1,6 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,7 +9,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,18 +22,30 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kev.domain.model.Contact
+import com.kev.lydia.ui.list.components.ContactList
+import com.kev.lydia.ui.list.components.ContactListPlaceholder
+import com.kev.lydia.ui.list.components.banner.OfflineBanner
+import com.kev.lydia.ui.list.components.state.EmptyContactsScreen
+import com.kev.lydia.ui.list.components.state.ErrorScreen
+import com.kev.lydia.ui.list.components.top_bar.HomeTopBar
+import com.kev.lydia.ui.navigation.LydiaRoutes
+import com.kev.lydia.ui.toPagingItems
 
 
 @Composable
-fun HomeRoute(navController: NavController, viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeRoute(
+    navController: NavController,
+    isOffline: State<Boolean>,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val contacts = viewModel.contacts.collectAsLazyPagingItems()
-    val isOffline by viewModel.isOffline.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
+    var previousOffline by remember { mutableStateOf(isOffline.value) }
 
     HomeScreen(
         contacts = contacts,
-        isOffline = isOffline,
+        isOffline = isOffline.value,
         searchQuery = searchQuery,
         isSearching = isSearching,
         onSearchQueryChange = { searchQuery = it },
@@ -46,15 +59,17 @@ fun HomeRoute(navController: NavController, viewModel: HomeViewModel = hiltViewM
                 "contacts",
                 filteredList
             )
-            navController.navigate("detail/$index")
+            navController.navigate(LydiaRoutes.detail(index))
         }
     )
 
-    /*LaunchedEffect(isOffline) {
-        if (!isOffline) {
+    LaunchedEffect(isOffline.value) {
+        if (previousOffline && !isOffline.value) {
             contacts.refresh()
         }
-    }*/
+        previousOffline = isOffline.value
+    }
+
 
 }
 
@@ -70,7 +85,7 @@ fun HomeScreen(
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(contacts.loadState.append) {
+    LaunchedEffect(Unit) {
         if (contacts.loadState.append is LoadState.Error) {
             val result = snackbarHostState.showSnackbar(
                 message = "Unable to retrieve more contacts, check your connection and try again later.",
@@ -86,10 +101,8 @@ fun HomeScreen(
             HomeTopBar(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
-                onFilterClick = { },
                 isSearching = isSearching,
-                onSearchToggle = onSearchToggle,
-                isFilterActive = true
+                onSearchToggle = onSearchToggle
 
             )
         },
