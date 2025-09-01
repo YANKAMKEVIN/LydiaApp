@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components.state
 
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
@@ -28,6 +28,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.kev.lydia.R
 
 @Composable
 fun EmptyScreenFancy(
@@ -57,7 +58,7 @@ fun EmptyScreenFancy(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(com.kev.lydia.R.raw.empty_list))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_list))
             val progress by animateLottieCompositionAsState(
                 composition,
                 iterations = LottieConstants.IterateForever

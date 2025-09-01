@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components.state
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,20 +16,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.kev.lydia.R
 
 @Composable
 fun ErrorScreen(
     message: String,
     onRetry: () -> Unit
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(com.kev.lydia.R.raw.no_internet))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_internet))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = LottieConstants.IterateForever
@@ -53,7 +56,7 @@ fun ErrorScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Oups, une erreur est survenue",
+                text = stringResource(R.string.error_screen_title),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
@@ -76,8 +79,14 @@ fun ErrorScreen(
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Réessayer")
+                Text(stringResource(R.string.retry_button_label))
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ErrorScreenPreview() {
+    ErrorScreen(message = "Connection error", onRetry = {})
 }
