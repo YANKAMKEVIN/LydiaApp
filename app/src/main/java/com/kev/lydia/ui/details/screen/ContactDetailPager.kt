@@ -1,4 +1,4 @@
-package com.kev.lydia.ui.details
+package com.kev.lydia.ui.details.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager

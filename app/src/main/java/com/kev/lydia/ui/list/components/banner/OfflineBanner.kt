@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components.banner
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kev.lydia.R
 
@@ -104,7 +105,7 @@ fun OfflineBanner(isOffline: Boolean) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.wifi_off),
-                    contentDescription = "Offline",
+                    contentDescription = stringResource(R.string.offline_banner_description),
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
@@ -112,7 +113,7 @@ fun OfflineBanner(isOffline: Boolean) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "Vous êtes en mode hors ligne",
+                    text = stringResource(R.string.offline_banner_title),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.scale(textScale)

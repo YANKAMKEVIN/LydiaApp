@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components.top_bar
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Row
@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kev.lydia.R
 import com.kev.lydia.ui.theme.LydiaTheme
 
 @Composable
@@ -31,13 +33,12 @@ fun HomeTopBar(
     searchQuery: String = "",
     isSearching: Boolean = false,
     onSearchQueryChange: (String) -> Unit,
-    onSearchToggle: () -> Unit,
-    onFilterClick: () -> Unit,
-    isFilterActive: Boolean = true
+    onSearchToggle: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Surface(
         tonalElevation = 8.dp,
-        //color = MaterialTheme.colorScheme.background,
     ) {
         Row(
             modifier = Modifier
@@ -46,12 +47,15 @@ fun HomeTopBar(
                 .height(50.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Crossfade(targetState = isSearching, label = "SearchCrossfade") { searching ->
+            Crossfade(
+                targetState = isSearching,
+                label = context.getString(R.string.list_top_bar_cross_fade_label)
+            ) { searching ->
                 if (searching) {
                     TextField(
                         value = searchQuery,
                         onValueChange = onSearchQueryChange,
-                        placeholder = { Text("Search contacts") },
+                        placeholder = { Text(context.getString(R.string.list_top_bar_search_placeholder)) },
                         modifier = Modifier
                             .weight(1f)
                             .height(50.dp),
@@ -65,7 +69,7 @@ fun HomeTopBar(
                     )
                 } else {
                     Text(
-                        text = "Contacts",
+                        text = context.getString(R.string.list_top_bar_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.weight(1f)
@@ -77,28 +81,12 @@ fun HomeTopBar(
             IconButton(onClick = onSearchToggle) {
                 Icon(
                     imageVector = if (isSearching) Icons.Default.Close else Icons.Default.Search,
-                    contentDescription = if (isSearching) "Close Search" else "Search"
+                    contentDescription = if (isSearching)
+                        context.getString(R.string.list_top_bar_close_search)
+                    else
+                        context.getString(R.string.list_top_bar_search_title)
                 )
             }
-            //TODO("Add filter icon")
-            /*Box {
-                IconButton(onClick = onFilterClick) {
-                    Icon(
-                        imageVector = Icons.Default.Filter,
-                        contentDescription = "Filter"
-                    )
-                }
-
-                if (isFilterActive) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(Color.Red, CircleShape)
-                            .align(Alignment.TopEnd)
-                            .offset(x = 4.dp, y = (-4).dp)
-                    )
-                }
-            }*/
         }
     }
 }
@@ -111,8 +99,6 @@ private fun HomeTopBarPreview() {
         HomeTopBar(
             searchQuery = "Jane Doe",
             onSearchQueryChange = {},
-            onFilterClick = {},
-            isFilterActive = true,
             onSearchToggle = {}
         )
     }

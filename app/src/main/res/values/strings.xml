@@ -2,4 +2,37 @@
     <string name="app_name">Lydia</string>
     <string name="snackbar_error_message">Unable to retrieve more contacts, check your connection and try again later.</string>
     <string name="snackbar_retry_action">Retry</string>
+
+    <!-- Contact Detail -->
+    <string name="intent_call_action">Call</string>
+    <string name="intent_email_action">Email</string>
+    <string name="intent_share_action">Share</string>
+    <string name="intent_back_action">Back</string>
+    <string name="contact_avatar_desc">Avatar</string>
+    <string name="contact_share_title">Share contact</string>
+    <string name="contact_share_subject">Contact: %1$s</string>
+    <string name="contact_share_text">Here is the contact of %1$s: %2$s, %3$s</string>
+    <string name="email_subject">Hello %1$s</string>
+    <string name="email_body">I am reaching out regarding…</string>
+
+    <!-- Info Cards -->
+    <string name="contact_info_age">Age</string>
+    <string name="contact_info_registered">Registered</string>
+
+    <!-- Offline Banner -->
+    <string name="offline_banner_title">You are currently offline</string>
+    <string name="offline_banner_description">Offline</string>
+
+    <!-- State -->
+    <string name="retry_button_label">Retry</string>
+    <string name="error_screen_title">Oops, an error occurred</string>
+
+    <!-- Top bar -->
+    <string name="details_top_bar_title">Profile</string>
+    <string name="list_top_bar_cross_fade_label">SearchCrossfade</string>
+    <string name="list_top_bar_search_placeholder">Search contacts</string>
+    <string name="list_top_bar_title">Contacts</string>
+    <string name="list_top_bar_search_title">Search</string>
+    <string name="list_top_bar_close_search">Close Search</string>
+
 </resources>

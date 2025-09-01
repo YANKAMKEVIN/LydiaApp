@@ -1,4 +1,4 @@
-package com.kev.lydia.ui.details
+package com.kev.lydia.ui.details.screen
 
 import android.content.Intent
 import androidx.compose.animation.core.animateDpAsState
@@ -34,13 +34,17 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.kev.domain.model.Contact
+import com.kev.lydia.R
+import com.kev.lydia.ui.details.components.ContactInfoRow
+import com.kev.lydia.ui.details.components.InfoCard
+import com.kev.lydia.ui.details.top_bar.ContactDetailTopBar
 import kotlin.math.absoluteValue
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +77,11 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                 onEmail = {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
                         data = "mailto:${contact.email}".toUri()
-                        putExtra(Intent.EXTRA_SUBJECT, "Bonjour ${contact.fullName}")
-                        putExtra(Intent.EXTRA_TEXT, "Je vous contacte au sujet de...")
+                        putExtra(
+                            Intent.EXTRA_SUBJECT,
+                            context.getString(R.string.email_subject, contact.fullName)
+                        )
+                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.email_body))
                     }
                     context.startActivity(intent)
                 },
@@ -84,10 +91,20 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                         putExtra(Intent.EXTRA_SUBJECT, "Contact: ${contact.fullName}")
                         putExtra(
                             Intent.EXTRA_TEXT,
-                            "Voici le contact de ${contact.fullName} : ${contact.phone}, ${contact.email}"
+                            context.getString(
+                                R.string.contact_share_text,
+                                contact.fullName,
+                                contact.phone,
+                                contact.email
+                            )
                         )
                     }
-                    context.startActivity(Intent.createChooser(shareIntent, "Partager le contact"))
+                    context.startActivity(
+                        Intent.createChooser(
+                            shareIntent,
+                            context.getString(R.string.contact_share_title)
+                        )
+                    )
                 }
             )
         },
@@ -110,7 +127,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
             ) {
                 AsyncImage(
                     model = contact.avatarUrl,
-                    contentDescription = "Avatar",
+                    contentDescription = stringResource(R.string.contact_avatar_desc),
                     modifier = Modifier
                         .size((150 * avatarScale).dp)
                         .scale(avatarScale)
@@ -132,7 +149,6 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Infos avec slide + fade
                 val infoList = listOf(
                     Pair(Icons.Filled.Email, contact.email),
                     Pair(Icons.Filled.Phone, contact.phone),

@@ -1,4 +1,4 @@
-package com.kev.lydia.ui.details
+package com.kev.lydia.ui.details.top_bar
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -27,11 +27,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.kev.domain.model.Contact
+import com.kev.lydia.R
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,13 +51,14 @@ fun ContactDetailTopBar(
     val titleAlpha by animateFloatAsState(targetValue = 1f - 0.5f * pageOffset.absoluteValue)
     val iconScale by animateFloatAsState(targetValue = 1f - 0.1f * pageOffset.absoluteValue)
     val iconAlpha by animateFloatAsState(targetValue = 1f - 0.5f * pageOffset.absoluteValue)
+    val context = LocalContext.current
 
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = rememberAsyncImagePainter(contact.avatarUrl),
-                    contentDescription = "Avatar",
+                    contentDescription = context.getString(R.string.contact_avatar_desc),
                     modifier = Modifier
                         .size((36 * avatarScale).dp)
                         .clip(CircleShape)
@@ -63,7 +66,7 @@ fun ContactDetailTopBar(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Profile",
+                    text = context.getString(R.string.details_top_bar_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.alpha(titleAlpha)
@@ -76,7 +79,11 @@ fun ContactDetailTopBar(
                     .scale(iconScale)
                     .alpha(iconAlpha)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = context.getString(R.string.intent_back_action),
+                    tint = Color(0xFF00796B)
+                )
             }
         },
         actions = {
@@ -86,7 +93,11 @@ fun ContactDetailTopBar(
                     .scale(iconScale)
                     .alpha(iconAlpha)
             ) {
-                Icon(Icons.Filled.Phone, contentDescription = "Call", tint = Color(0xFF00796B))
+                Icon(
+                    Icons.Filled.Phone,
+                    contentDescription = context.getString(R.string.intent_call_action),
+                    tint = Color(0xFF00796B)
+                )
             }
             IconButton(
                 onClick = onEmail,
@@ -94,7 +105,11 @@ fun ContactDetailTopBar(
                     .scale(iconScale)
                     .alpha(iconAlpha)
             ) {
-                Icon(Icons.Filled.Email, contentDescription = "Email", tint = Color(0xFF00796B))
+                Icon(
+                    Icons.Filled.Email,
+                    contentDescription = context.getString(R.string.intent_email_action),
+                    tint = Color(0xFF00796B)
+                )
             }
             IconButton(
                 onClick = onShare,
@@ -102,7 +117,11 @@ fun ContactDetailTopBar(
                     .scale(iconScale)
                     .alpha(iconAlpha)
             ) {
-                Icon(Icons.Filled.Share, contentDescription = "Share", tint = Color(0xFF00796B))
+                Icon(
+                    Icons.Filled.Share,
+                    contentDescription = context.getString(R.string.intent_share_action),
+                    tint = Color(0xFF00796B)
+                )
             }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(

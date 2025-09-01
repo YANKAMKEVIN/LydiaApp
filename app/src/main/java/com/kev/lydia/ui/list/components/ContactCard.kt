@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +59,7 @@ fun ContactCard(
                     .error(android.R.drawable.ic_menu_report_image)
                     .transformations(CircleCropTransformation())
                     .build(),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(com.kev.lydia.R.string.contact_avatar_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
