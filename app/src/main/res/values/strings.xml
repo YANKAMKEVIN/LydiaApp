@@ -8,7 +8,6 @@
     <string name="intent_email_action">Email</string>
     <string name="intent_share_action">Share</string>
     <string name="intent_back_action">Back</string>
-    <string name="details_top_bar_title">Profile</string>
     <string name="contact_avatar_desc">Avatar</string>
     <string name="contact_share_title">Share contact</string>
     <string name="contact_share_subject">Contact: %1$s</string>
@@ -27,4 +26,13 @@
     <!-- State -->
     <string name="retry_button_label">Retry</string>
     <string name="error_screen_title">Oops, an error occurred</string>
+
+    <!-- Top bar -->
+    <string name="details_top_bar_title">Profile</string>
+    <string name="list_top_bar_cross_fade_label">SearchCrossfade</string>
+    <string name="list_top_bar_search_placeholder">Search contacts</string>
+    <string name="list_top_bar_title">Contacts</string>
+    <string name="list_top_bar_search_title">Search</string>
+    <string name="list_top_bar_close_search">Close Search</string>
+
 </resources>
