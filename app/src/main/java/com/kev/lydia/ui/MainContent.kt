@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kev.domain.model.Contact
-import com.kev.lydia.ui.details.ContactDetailPager
+import com.kev.lydia.ui.details.screen.ContactDetailPager
 
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
