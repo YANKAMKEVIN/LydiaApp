@@ -10,17 +10,21 @@
     <string name="intent_back_action">Back</string>
     <string name="details_top_bar_title">Profile</string>
     <string name="contact_avatar_desc">Avatar</string>
-
-    <!-- Contact Detail -->
     <string name="contact_share_title">Share contact</string>
     <string name="contact_share_subject">Contact: %1$s</string>
     <string name="contact_share_text">Here is the contact of %1$s: %2$s, %3$s</string>
-
-    <!-- Email -->
     <string name="email_subject">Hello %1$s</string>
     <string name="email_body">I am reaching out regarding…</string>
 
     <!-- Info Cards -->
     <string name="contact_info_age">Age</string>
     <string name="contact_info_registered">Registered</string>
+
+    <!-- Offline Banner -->
+    <string name="offline_banner_title">You are currently offline</string>
+    <string name="offline_banner_description">Offline</string>
+
+    <!-- State -->
+    <string name="retry_button_label">Retry</string>
+    <string name="error_screen_title">Oops, an error occurred</string>
 </resources>
