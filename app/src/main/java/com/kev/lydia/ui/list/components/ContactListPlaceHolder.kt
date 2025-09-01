@@ -1,4 +1,4 @@
-package com.kev.lydia.ui
+package com.kev.lydia.ui.list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
