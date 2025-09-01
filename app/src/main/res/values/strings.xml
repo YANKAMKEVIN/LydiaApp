@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Lydia</string>
+    <string name="snackbar_error_message">Unable to retrieve more contacts, check your connection and try again later.</string>
+    <string name="snackbar_retry_action">Retry</string>
 </resources>

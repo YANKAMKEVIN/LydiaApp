@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.kev.lydia.R
 
 @Composable
-fun PremiumOfflineBannerDynamic(isOffline: Boolean) {
+fun OfflineBanner(isOffline: Boolean) {
     var visible by remember { mutableStateOf(isOffline) }
 
     LaunchedEffect(isOffline) {

@@ -3,8 +3,9 @@ package com.kev.lydia.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,11 +49,12 @@ fun HomeRoute(navController: NavController, viewModel: HomeViewModel = hiltViewM
             navController.navigate("detail/$index")
         }
     )
-    LaunchedEffect(isOffline) {
+
+    /*LaunchedEffect(isOffline) {
         if (!isOffline) {
             contacts.refresh()
         }
-    }
+    }*/
 
 }
 
@@ -67,6 +69,18 @@ fun HomeScreen(
     onContactClick: (Contact, List<Contact>) -> Unit
 ) {
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(contacts.loadState.append) {
+        if (contacts.loadState.append is LoadState.Error) {
+            val result = snackbarHostState.showSnackbar(
+                message = "Unable to retrieve more contacts, check your connection and try again later.",
+                actionLabel = "Retry",
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                contacts.retry()
+            }
+        }
+    }
     Scaffold(
         topBar = {
             HomeTopBar(
@@ -80,7 +94,7 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            PremiumOfflineBannerDynamic(isOffline)
+            OfflineBanner(isOffline)
         }
     ) { paddingValues ->
         Box(
@@ -88,8 +102,6 @@ fun HomeScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            val filteredList = contacts.itemSnapshotList.items.filterByQuery(searchQuery)
-
             when {
                 contacts.loadState.refresh is LoadState.Loading -> {
                     ContactListPlaceholder()
@@ -104,17 +116,13 @@ fun HomeScreen(
 
                 contacts.itemCount == 0 -> EmptyContactsScreen(onRetry = { contacts.refresh() })
 
-                filteredList.isEmpty() -> EmptySearchScreen(onClearSearch = { onSearchQueryChange("") })
-
                 else -> {
-
-                    LazyColumn {
-                        items(filteredList.size) { contact ->
-                            ContactCard(contact = filteredList[contact]) {
-                                onContactClick(filteredList[contact], filteredList)
-                            }
-                        }
-                    }
+                    ContactList(
+                        contacts = contacts,
+                        searchQuery = searchQuery,
+                        onContactClick = onContactClick,
+                        onClearSearch = { onSearchQueryChange("") }
+                    )
                 }
             }
         }
