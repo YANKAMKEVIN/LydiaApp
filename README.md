@@ -138,12 +138,12 @@ com.kev.lydia
 ## Screenshots
 
 <p align="center">
-  <img src="images/screenshot-home.png" alt="LydiaApp screenshot" width="300" />
+  <img src="images/screenshot-home.png" alt="LydiaApp screenshot" width="240" />
 </p>
 
-![WhatsApp Image 2025-09-01 at 1 06 26 PM](https://github.com/user-attachments/assets/a65140dc-f04e-4f43-a988-d848d6391808)
-![WhatsApp Image 2025-09-01 at 1 06 26 PM (1)](https://github.com/user-attachments/assets/48cf4999-9748-441c-9821-6fdb89a7d0ad)
-![WhatsApp Image 2025-09-01 at 1 06 26 PM (2)](https://github.com/user-attachments/assets/7452ab92-a05d-4703-bfa8-7e1219009326)
+<img src="https://github.com/user-attachments/assets/a65140dc-f04e-4f43-a988-d848d6391808" alt="WhatsApp Image 2025-09-01 at 1 06 26 PM" width="240" />
+<img src="https://github.com/user-attachments/assets/48cf4999-9748-441c-9821-6fdb89a7d0ad" alt="WhatsApp Image 2025-09-01 at 1 06 26 PM (1)" width="240" />
+<img src="https://github.com/user-attachments/assets/7452ab92-a05d-4703-bfa8-7e1219009326" alt="WhatsApp Image 2025-09-01 at 1 06 26 PM (2)" width="240" />
 
 ---
 
