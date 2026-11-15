@@ -3,10 +3,12 @@ package com.kev.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 class NetworkObserver @Inject constructor(
@@ -21,8 +23,15 @@ class NetworkObserver @Inject constructor(
             override fun onLost(network: Network) { trySend(false) }
         }
 
+        // registerDefaultNetworkCallback only calls onAvailable when a network exists, so
+        // nothing would be emitted when the app starts offline: publish the current state first.
+        trySend(connectivityManager.isCurrentlyConnected())
         connectivityManager.registerDefaultNetworkCallback(callback)
         awaitClose { connectivityManager.unregisterNetworkCallback(callback) }
-    }
+    }.distinctUntilChanged()
+
+    private fun ConnectivityManager.isCurrentlyConnected(): Boolean =
+        getNetworkCapabilities(activeNetwork)
+            ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
 }
 
