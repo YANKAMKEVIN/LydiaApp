@@ -11,7 +11,9 @@ import com.kev.data.datasource.local.RemoteKeys
 import com.kev.data.mapper.ContactMapper.toContactEntity
 import com.kev.data.network.NetworkError
 import com.kev.data.network.NetworkResponse
+import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalPagingApi::class)
 class ContactRemoteMediator @Inject constructor(
@@ -67,18 +69,22 @@ class ContactRemoteMediator @Inject constructor(
                     MediatorResult.Success(endOfPaginationReached = contacts.isEmpty())
                 }
 
+                // Failures are reported as errors (not as a successful empty load) so Paging exposes a
+                // LoadState.Error the UI can show with a retry action. Cached contacts stay visible.
                 is NetworkResponse.Failure -> {
                     when (val error = networkResult.error) {
                         is NetworkError.UnResolveAddress ->
-                            MediatorResult.Success(endOfPaginationReached = false)
+                            MediatorResult.Error(IOException(error.message))
 
                         else ->
                             MediatorResult.Error(Exception("Network error: ${error.message}"))
                     }
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            MediatorResult.Success(endOfPaginationReached = false)
+            MediatorResult.Error(e)
         }
     }
 }

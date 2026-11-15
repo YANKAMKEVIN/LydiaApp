@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.kev.domain.model.Contact
 import com.kev.lydia.ui.list.components.state.EmptySearchScreen
-import com.kev.lydia.ui.list.components.state.LoaderScreen
 
 @Composable
 fun ContactList(
@@ -48,10 +46,11 @@ fun ContactList(
                     }
                 }
             }
-            item {
-                if (contacts.loadState.append is LoadState.Loading) {
-                    LoaderScreen()
-                }
+            item(key = "footer") {
+                ContactListFooter(
+                    appendState = contacts.loadState.append,
+                    onRetry = contacts::retry
+                )
             }
         }
     }
