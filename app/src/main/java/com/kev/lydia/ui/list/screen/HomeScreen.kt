@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -15,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -22,6 +21,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kev.domain.model.Contact
+import com.kev.lydia.R
 import com.kev.lydia.ui.list.components.ContactList
 import com.kev.lydia.ui.list.components.ContactListPlaceholder
 import com.kev.lydia.ui.list.components.banner.OfflineBanner
@@ -30,6 +30,7 @@ import com.kev.lydia.ui.list.components.state.ErrorScreen
 import com.kev.lydia.ui.list.components.top_bar.HomeTopBar
 import com.kev.lydia.ui.navigation.LydiaRoutes
 import com.kev.lydia.ui.toPagingItems
+import java.io.IOException
 
 
 @Composable
@@ -84,18 +85,6 @@ fun HomeScreen(
     onContactClick: (Contact, List<Contact>) -> Unit
 ) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) {
-        if (contacts.loadState.append is LoadState.Error) {
-            val result = snackbarHostState.showSnackbar(
-                message = "Unable to retrieve more contacts, check your connection and try again later.",
-                actionLabel = "Retry",
-            )
-            if (result == SnackbarResult.ActionPerformed) {
-                contacts.retry()
-            }
-        }
-    }
     Scaffold(
         topBar = {
             HomeTopBar(
@@ -116,13 +105,20 @@ fun HomeScreen(
                 .fillMaxSize()
         ) {
             when {
-                contacts.loadState.refresh is LoadState.Loading -> {
+                // Contacts are cached: keep showing them while a refresh runs or after it failed
+                // (e.g. offline), and only fall back to full-screen states when there is nothing to show.
+                contacts.itemCount == 0 && contacts.loadState.refresh is LoadState.Loading -> {
                     ContactListPlaceholder()
                 }
 
-                contacts.loadState.refresh is LoadState.Error -> {
+                contacts.itemCount == 0 && contacts.loadState.refresh is LoadState.Error -> {
                     val error = contacts.loadState.refresh as LoadState.Error
-                    ErrorScreen(message = error.error.localizedMessage ?: "Unknown Error") {
+                    val message = if (error.error is IOException) {
+                        stringResource(R.string.error_screen_network_message)
+                    } else {
+                        error.error.localizedMessage ?: stringResource(R.string.error_screen_unknown_message)
+                    }
+                    ErrorScreen(message = message) {
                         contacts.refresh()
                     }
                 }

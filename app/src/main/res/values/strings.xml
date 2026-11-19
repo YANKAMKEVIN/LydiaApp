@@ -26,6 +26,8 @@
     <!-- State -->
     <string name="retry_button_label">Retry</string>
     <string name="error_screen_title">Oops, an error occurred</string>
+    <string name="error_screen_network_message">Unable to load contacts. Check your internet connection and try again.</string>
+    <string name="error_screen_unknown_message">Unknown error</string>
 
     <!-- Top bar -->
     <string name="details_top_bar_title">Profile</string>
