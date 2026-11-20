@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.Lydia" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Launch theme: brand background with the app logo until MainActivity switches to Theme.Lydia. -->
+    <style name="Theme.Lydia.Starting">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 </resources>

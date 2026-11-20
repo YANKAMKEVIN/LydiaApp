@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dark window behind the Compose content, so the launch does not flash white in dark theme. -->
+    <style name="Theme.Lydia" parent="android:Theme.Material.NoActionBar" />
+</resources>
