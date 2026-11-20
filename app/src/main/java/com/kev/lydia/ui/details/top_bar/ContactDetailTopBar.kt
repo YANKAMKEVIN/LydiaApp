@@ -1,12 +1,10 @@
 package com.kev.lydia.ui.details.top_bar
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -24,22 +22,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
+import com.kev.lydia.ui.components.ContactAvatar
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactDetailTopBar(
     contact: Contact,
+    position: Int,
+    total: Int,
     pageOffset: Float,
     onBack: () -> Unit,
     onCall: () -> Unit,
@@ -56,19 +55,22 @@ fun ContactDetailTopBar(
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = rememberAsyncImagePainter(contact.avatarUrl),
-                    contentDescription = context.getString(R.string.contact_avatar_desc),
+                ContactAvatar(
+                    fullName = contact.fullName,
+                    avatarUrl = contact.avatarUrl,
                     modifier = Modifier
                         .size((36 * avatarScale).dp)
-                        .clip(CircleShape)
                         .alpha(avatarAlpha)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = context.getString(R.string.details_top_bar_title),
+                    // "3 / 60": where the user is in the swipeable list of contacts.
+                    text = if (total > 1) {
+                        stringResource(R.string.details_top_bar_position, position, total)
+                    } else {
+                        stringResource(R.string.details_top_bar_title)
+                    },
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.alpha(titleAlpha)
                 )
             }
@@ -82,7 +84,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = context.getString(R.string.intent_back_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
@@ -96,7 +98,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Phone,
                     contentDescription = context.getString(R.string.intent_call_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             IconButton(
@@ -108,7 +110,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Email,
                     contentDescription = context.getString(R.string.intent_email_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             IconButton(
@@ -120,13 +122,13 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Share,
                     contentDescription = context.getString(R.string.intent_share_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.Transparent,
-            titleContentColor = Color.Black,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
         )
     )
 }
@@ -150,6 +152,8 @@ fun ContactDetailTopBarPreview() {
     )
     ContactDetailTopBar(
         contact = contact,
+        position = 3,
+        total = 60,
         pageOffset = 0f,
         onBack = {},
         onCall = {},

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -30,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kev.lydia.R
@@ -52,10 +52,18 @@ fun HomeTopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(start = if (isSearching) 4.dp else 16.dp, end = 16.dp)
                 .height(64.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (isSearching) {
+                IconButton(onClick = onSearchToggle) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = context.getString(R.string.list_top_bar_close_search)
+                    )
+                }
+            }
             Crossfade(
                 targetState = isSearching,
                 label = context.getString(R.string.list_top_bar_cross_fade_label),
@@ -73,6 +81,17 @@ fun HomeTopBar(
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
                         singleLine = true,
+                        // Empties the field without leaving the search.
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onSearchQueryChange("") }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = context.getString(R.string.list_top_bar_clear_search)
+                                    )
+                                }
+                            }
+                        },
                         // The list filters while typing: the keyboard action only closes the keyboard.
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
@@ -81,28 +100,27 @@ fun HomeTopBar(
                         keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                         shape = RoundedCornerShape(12.dp),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF0F0F0),
-                            unfocusedContainerColor = Color(0xFFF0F0F0),
-                            cursorColor = Color.Black,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
                         )
                     )
                 } else {
                     Text(
                         text = context.getString(R.string.list_top_bar_title),
-                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
 
-            IconButton(onClick = onSearchToggle) {
-                Icon(
-                    imageVector = if (isSearching) Icons.Default.Close else Icons.Default.Search,
-                    contentDescription = if (isSearching)
-                        context.getString(R.string.list_top_bar_close_search)
-                    else
-                        context.getString(R.string.list_top_bar_search_title)
-                )
+            if (!isSearching) {
+                IconButton(onClick = onSearchToggle) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = context.getString(R.string.list_top_bar_search_title)
+                    )
+                }
             }
         }
     }

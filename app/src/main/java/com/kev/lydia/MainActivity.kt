@@ -20,6 +20,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Leave the launch theme (splash background) before the window content is created.
+        setTheme(R.style.Theme_Lydia)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

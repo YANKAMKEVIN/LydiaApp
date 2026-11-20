@@ -2,6 +2,7 @@ package com.kev.lydia.ui.list.screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -87,16 +88,15 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            HomeTopBar(
-                searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange,
-                isSearching = isSearching,
-                onSearchToggle = onSearchToggle
-
-            )
-        },
-        bottomBar = {
-            OfflineBanner(isOffline)
+            Column {
+                HomeTopBar(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = onSearchQueryChange,
+                    isSearching = isSearching,
+                    onSearchToggle = onSearchToggle
+                )
+                OfflineBanner(isOffline)
+            }
         }
     ) { paddingValues ->
         Box(

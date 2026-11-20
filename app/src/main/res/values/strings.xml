@@ -8,6 +8,10 @@
     <string name="intent_email_action">Email</string>
     <string name="intent_share_action">Share</string>
     <string name="intent_back_action">Back</string>
+    <string name="intent_map_action">Show on map</string>
+    <string name="intent_no_app">No app can open this</string>
+    <string name="contact_info_copy_action">Copy</string>
+    <string name="contact_info_copied">Copied</string>
     <string name="contact_avatar_desc">Avatar</string>
     <string name="contact_share_title">Share contact</string>
     <string name="contact_share_subject">Contact: %1$s</string>
@@ -18,10 +22,17 @@
     <!-- Info Cards -->
     <string name="contact_info_age">Age</string>
     <string name="contact_info_registered">Registered</string>
+    <string name="contact_username">@%1$s</string>
+    <string name="contact_registered_recently">Less than a year ago</string>
+    <plurals name="contact_registered_years_ago">
+        <item quantity="one">%1$d year ago</item>
+        <item quantity="other">%1$d years ago</item>
+    </plurals>
 
     <!-- Offline Banner -->
-    <string name="offline_banner_title">You are currently offline</string>
-    <string name="offline_banner_description">Offline</string>
+    <string name="offline_banner_title">You are offline</string>
+    <string name="offline_banner_subtitle">Showing saved contacts</string>
+    <string name="online_banner_title">Back online</string>
 
     <!-- State -->
     <string name="retry_button_label">Retry</string>
@@ -31,10 +42,16 @@
 
     <!-- Top bar -->
     <string name="details_top_bar_title">Profile</string>
+    <string name="details_top_bar_position">%1$d / %2$d</string>
     <string name="list_top_bar_cross_fade_label">SearchCrossfade</string>
     <string name="list_top_bar_search_placeholder">Search contacts</string>
     <string name="list_top_bar_title">Contacts</string>
     <string name="list_top_bar_search_title">Search</string>
     <string name="list_top_bar_close_search">Close Search</string>
+    <string name="list_top_bar_clear_search">Clear search</string>
+    <plurals name="search_results_count">
+        <item quantity="one">%1$d result</item>
+        <item quantity="other">%1$d results</item>
+    </plurals>
 
 </resources>
