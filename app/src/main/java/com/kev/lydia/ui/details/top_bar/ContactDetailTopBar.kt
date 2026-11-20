@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,8 @@ import kotlin.math.absoluteValue
 @Composable
 fun ContactDetailTopBar(
     contact: Contact,
+    position: Int,
+    total: Int,
     pageOffset: Float,
     onBack: () -> Unit,
     onCall: () -> Unit,
@@ -62,7 +65,12 @@ fun ContactDetailTopBar(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = context.getString(R.string.details_top_bar_title),
+                    // "3 / 60": where the user is in the swipeable list of contacts.
+                    text = if (total > 1) {
+                        stringResource(R.string.details_top_bar_position, position, total)
+                    } else {
+                        stringResource(R.string.details_top_bar_title)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.alpha(titleAlpha)
@@ -146,6 +154,8 @@ fun ContactDetailTopBarPreview() {
     )
     ContactDetailTopBar(
         contact = contact,
+        position = 3,
+        total = 60,
         pageOffset = 0f,
         onBack = {},
         onCall = {},

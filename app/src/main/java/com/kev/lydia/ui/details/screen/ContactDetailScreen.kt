@@ -57,7 +57,14 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float, bgColor: Color) {
+fun ContactDetailScreen(
+    contact: Contact,
+    position: Int,
+    total: Int,
+    onBack: () -> Unit,
+    pageOffset: Float,
+    bgColor: Color
+) {
     val context = LocalContext.current
 
     val avatarScale by animateFloatAsState(targetValue = 1f - 0.2f * pageOffset.absoluteValue)
@@ -91,6 +98,8 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
         topBar = {
             ContactDetailTopBar(
                 contact = contact,
+                position = position,
+                total = total,
                 pageOffset = pageOffset,
                 onBack = onBack,
                 onCall = dial,

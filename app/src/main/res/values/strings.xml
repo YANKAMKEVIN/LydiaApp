@@ -42,6 +42,7 @@
 
     <!-- Top bar -->
     <string name="details_top_bar_title">Profile</string>
+    <string name="details_top_bar_position">%1$d / %2$d</string>
     <string name="list_top_bar_cross_fade_label">SearchCrossfade</string>
     <string name="list_top_bar_search_placeholder">Search contacts</string>
     <string name="list_top_bar_title">Contacts</string>
