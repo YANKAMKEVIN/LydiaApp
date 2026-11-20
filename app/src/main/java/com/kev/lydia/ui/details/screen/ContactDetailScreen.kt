@@ -8,6 +8,12 @@ import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,11 +24,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -151,7 +160,9 @@ fun ContactDetailScreen(
                         .size((150 * avatarScale).dp)
                         .scale(avatarScale)
                         .alpha(avatarAlpha)
+                        // Shadow and ring outside the avatar's own circle clip, so both show.
                         .shadow(10.dp, CircleShape)
+                        .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -185,33 +196,54 @@ fun ContactDetailScreen(
                         openMap
                     )
                 )
-                Column(
+                // The three lines grouped in one card.
+                Card(
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    ),
                     modifier = Modifier
+                        .fillMaxWidth()
                         .offset(x = infoOffsetX)
                 ) {
-                    infoList.forEach { line ->
-                        val alpha by animateFloatAsState(
-                            targetValue = if (pageOffset.absoluteValue < 0.5f) 1f else 0f
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        ContactInfoRow(line.icon, line.text, alpha, line.actionLabel, line.onClick)
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        infoList.forEach { line ->
+                            val alpha by animateFloatAsState(
+                                targetValue = if (pageOffset.absoluteValue < 0.5f) 1f else 0f
+                            )
+                            ContactInfoRow(line.icon, line.text, alpha, line.actionLabel, line.onClick)
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-                InfoCard(
-                    title = stringResource(R.string.contact_info_age),
-                    value = contact.age.toString()
-                )
+                Spacer(modifier = Modifier.height(16.dp))
                 val registered = remember(contact.registeredDate) {
                     RegisteredDate.parse(contact.registeredDate)
                 }
-                InfoCard(
-                    title = stringResource(R.string.contact_info_registered),
-                    value = registered?.let { RegisteredDate.format(it, Locale.getDefault()) }
-                        ?: contact.registeredDate,
-                    supporting = registered?.let { registeredAgo(it) }
-                )
+                // Age and registration side by side, same height.
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    InfoCard(
+                        title = stringResource(R.string.contact_info_age),
+                        value = contact.age.toString(),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                    InfoCard(
+                        title = stringResource(R.string.contact_info_registered),
+                        value = registered?.let { RegisteredDate.format(it, Locale.getDefault()) }
+                            ?: contact.registeredDate,
+                        supporting = registered?.let { registeredAgo(it) },
+                        modifier = Modifier
+                            .weight(2f)
+                            .fillMaxHeight()
+                    )
+                }
             }
         }
     }
