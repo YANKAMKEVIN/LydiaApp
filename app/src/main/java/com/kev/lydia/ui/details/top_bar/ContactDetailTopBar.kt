@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kev.domain.model.Contact
@@ -72,7 +71,6 @@ fun ContactDetailTopBar(
                         stringResource(R.string.details_top_bar_title)
                     },
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.alpha(titleAlpha)
                 )
             }

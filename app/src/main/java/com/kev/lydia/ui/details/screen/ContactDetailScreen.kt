@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.kev.domain.model.Contact
@@ -160,7 +159,6 @@ fun ContactDetailScreen(
                 Text(
                     text = contact.fullName,
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .alpha(avatarAlpha)
                         .scale(1f - 0.15f * pageOffset.absoluteValue)

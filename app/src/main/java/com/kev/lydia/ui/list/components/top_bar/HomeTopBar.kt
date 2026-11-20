@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kev.lydia.R
@@ -110,7 +109,6 @@ fun HomeTopBar(
                 } else {
                     Text(
                         text = context.getString(R.string.list_top_bar_title),
-                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
