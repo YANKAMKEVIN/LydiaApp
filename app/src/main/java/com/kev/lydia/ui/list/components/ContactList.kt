@@ -2,8 +2,11 @@ package com.kev.lydia.ui.list.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,11 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.kev.domain.model.Contact
+import com.kev.lydia.R
 import com.kev.lydia.ui.list.components.state.EmptySearchScreen
 import kotlinx.coroutines.delay
 
@@ -46,9 +51,21 @@ fun ContactList(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = ListContentPadding
             ) {
+                item(key = "results") {
+                    Text(
+                        text = pluralStringResource(
+                            R.plurals.search_results_count,
+                            filteredItems.size,
+                            filteredItems.size
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    )
+                }
                 items(filteredItems.size) { index ->
                     val contact = filteredItems[index]
-                    ContactCard(contact = contact) {
+                    ContactCard(contact = contact, highlight = searchQuery) {
                         onContactClick(contact, filteredItems)
                     }
                 }

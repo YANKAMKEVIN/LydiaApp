@@ -14,8 +14,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,8 +28,22 @@ import com.kev.lydia.ui.components.ContactAvatar
 @Composable
 fun ContactCard(
     contact: Contact,
+    highlight: String = "",
     onClick: () -> Unit
 ) {
+    val highlightColor = MaterialTheme.colorScheme.primary
+    val name = remember(contact.fullName, highlight, highlightColor) {
+        buildAnnotatedString {
+            append(contact.fullName)
+            matchRange(contact.fullName, highlight)?.let { range ->
+                addStyle(
+                    SpanStyle(color = highlightColor, fontWeight = FontWeight.ExtraBold),
+                    range.first,
+                    range.last + 1
+                )
+            }
+        }
+    }
     // Card(onClick) keeps the ripple inside the rounded corners.
     Card(
         onClick = onClick,
@@ -50,7 +67,7 @@ fun ContactCard(
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(contact.fullName, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     "${contact.city}, ${contact.country}",

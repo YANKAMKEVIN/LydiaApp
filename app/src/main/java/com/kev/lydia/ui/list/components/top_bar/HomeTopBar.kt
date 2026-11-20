@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -52,10 +53,18 @@ fun HomeTopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(start = if (isSearching) 4.dp else 16.dp, end = 16.dp)
                 .height(64.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (isSearching) {
+                IconButton(onClick = onSearchToggle) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = context.getString(R.string.list_top_bar_close_search)
+                    )
+                }
+            }
             Crossfade(
                 targetState = isSearching,
                 label = context.getString(R.string.list_top_bar_cross_fade_label),
@@ -73,6 +82,17 @@ fun HomeTopBar(
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
                         singleLine = true,
+                        // Empties the field without leaving the search.
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onSearchQueryChange("") }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = context.getString(R.string.list_top_bar_clear_search)
+                                    )
+                                }
+                            }
+                        },
                         // The list filters while typing: the keyboard action only closes the keyboard.
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
@@ -96,14 +116,13 @@ fun HomeTopBar(
                 }
             }
 
-            IconButton(onClick = onSearchToggle) {
-                Icon(
-                    imageVector = if (isSearching) Icons.Default.Close else Icons.Default.Search,
-                    contentDescription = if (isSearching)
-                        context.getString(R.string.list_top_bar_close_search)
-                    else
-                        context.getString(R.string.list_top_bar_search_title)
-                )
+            if (!isSearching) {
+                IconButton(onClick = onSearchToggle) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = context.getString(R.string.list_top_bar_search_title)
+                    )
+                }
             }
         }
     }
