@@ -82,7 +82,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = context.getString(R.string.intent_back_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
@@ -96,7 +96,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Phone,
                     contentDescription = context.getString(R.string.intent_call_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             IconButton(
@@ -108,7 +108,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Email,
                     contentDescription = context.getString(R.string.intent_email_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             IconButton(
@@ -120,7 +120,7 @@ fun ContactDetailTopBar(
                 Icon(
                     Icons.Filled.Share,
                     contentDescription = context.getString(R.string.intent_share_action),
-                    tint = Color(0xFF00796B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
