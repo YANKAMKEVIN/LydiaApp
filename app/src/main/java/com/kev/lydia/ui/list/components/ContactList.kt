@@ -1,5 +1,6 @@
 package com.kev.lydia.ui.list.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -19,6 +21,9 @@ import com.kev.lydia.ui.list.components.state.EmptySearchScreen
 import kotlinx.coroutines.delay
 
 private const val PULL_REFRESH_TIMEOUT_MS = 15_000L
+
+// Keeps the cards off the screen edges.
+private val ListContentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +42,10 @@ fun ContactList(
         if (filteredItems.isEmpty()) {
             EmptySearchScreen(onClearSearch = { onClearSearch() })
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = ListContentPadding
+            ) {
                 items(filteredItems.size) { index ->
                     val contact = filteredItems[index]
                     ContactCard(contact = contact) {
@@ -66,7 +74,10 @@ fun ContactList(
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = ListContentPadding
+            ) {
                 items(
                     count = contacts.itemCount,
                     key = contacts.itemKey { it.id }
