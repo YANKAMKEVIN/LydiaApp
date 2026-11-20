@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InfoCard(title: String, value: String) {
+fun InfoCard(title: String, value: String, supporting: String? = null) {
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -29,6 +29,13 @@ fun InfoCard(title: String, value: String) {
             Text(title, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(value, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+            if (supporting != null) {
+                Text(
+                    supporting,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

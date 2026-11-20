@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,9 +43,12 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
+import com.kev.lydia.ui.details.RegisteredDate
 import com.kev.lydia.ui.details.components.ContactInfoRow
 import com.kev.lydia.ui.details.components.InfoCard
 import com.kev.lydia.ui.details.top_bar.ContactDetailTopBar
+import java.time.LocalDate
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,6 +152,15 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                         .scale(1f - 0.15f * pageOffset.absoluteValue)
                 )
 
+                if (contact.username.isNotBlank()) {
+                    Text(
+                        text = stringResource(R.string.contact_username, contact.username),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.alpha(avatarAlpha)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 val infoList = listOf(
@@ -168,11 +182,31 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
-                InfoCard(title = "Age", value = contact.age.toString())
-                InfoCard(title = "Registered", value = contact.registeredDate)
+                InfoCard(
+                    title = stringResource(R.string.contact_info_age),
+                    value = contact.age.toString()
+                )
+                val registered = remember(contact.registeredDate) {
+                    RegisteredDate.parse(contact.registeredDate)
+                }
+                InfoCard(
+                    title = stringResource(R.string.contact_info_registered),
+                    value = registered?.let { RegisteredDate.format(it, Locale.getDefault()) }
+                        ?: contact.registeredDate,
+                    supporting = registered?.let { registeredAgo(it) }
+                )
             }
         }
     }
 }
 
-
+/** "11 years ago", or "Less than a year ago" for a recent registration. */
+@Composable
+private fun registeredAgo(date: LocalDate): String {
+    val years = RegisteredDate.yearsSince(date, LocalDate.now())
+    return if (years == 0) {
+        stringResource(R.string.contact_registered_recently)
+    } else {
+        pluralStringResource(R.plurals.contact_registered_years_ago, years, years)
+    }
+}
