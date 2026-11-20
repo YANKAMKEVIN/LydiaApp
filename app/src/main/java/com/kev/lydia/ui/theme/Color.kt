@@ -60,6 +60,12 @@ val SurfaceContainerDark = Color(0xFF201F25)
 val SurfaceContainerHighDark = Color(0xFF2B292F)
 val SurfaceContainerHighestDark = Color(0xFF36343A)
 
+// "Back online" banner
+val OnlineContainerLight = Color(0xFFC6F0CC)
+val OnOnlineContainerLight = Color(0xFF00391A)
+val OnlineContainerDark = Color(0xFF1C4D2A)
+val OnOnlineContainerDark = Color(0xFFB4F2BE)
+
 // Background tints of the contact detail pages (one per page, cycling). The dark variants keep
 // the same hues but are deep enough for light text.
 val ContactTintsLight = listOf(

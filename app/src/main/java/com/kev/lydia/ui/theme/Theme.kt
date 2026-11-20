@@ -97,3 +97,12 @@ fun LydiaTheme(
 @Composable
 fun contactTints(): List<Color> =
     if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) ContactTintsDark else ContactTintsLight
+
+/** Container / content colours of the "Back online" banner for the current scheme. */
+@Composable
+fun onlineBannerColors(): Pair<Color, Color> =
+    if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) {
+        OnlineContainerDark to OnOnlineContainerDark
+    } else {
+        OnlineContainerLight to OnOnlineContainerLight
+    }

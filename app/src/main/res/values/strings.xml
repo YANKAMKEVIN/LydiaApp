@@ -30,8 +30,9 @@
     </plurals>
 
     <!-- Offline Banner -->
-    <string name="offline_banner_title">You are currently offline</string>
-    <string name="offline_banner_description">Offline</string>
+    <string name="offline_banner_title">You are offline</string>
+    <string name="offline_banner_subtitle">Showing saved contacts</string>
+    <string name="online_banner_title">Back online</string>
 
     <!-- State -->
     <string name="retry_button_label">Retry</string>
