@@ -1,6 +1,10 @@
 package com.kev.lydia.ui.details.screen
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -34,6 +38,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -67,29 +72,30 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
         )
     )
 
+    val dial = {
+        context.startActivitySafely(Intent(Intent.ACTION_DIAL, "tel:${contact.phone}".toUri()))
+    }
+    val writeEmail = {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:${contact.email}".toUri()
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.email_subject, contact.fullName))
+            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.email_body))
+        }
+        context.startActivitySafely(intent)
+    }
+    val openMap = {
+        val place = Uri.encode("${contact.city}, ${contact.country}")
+        context.startActivitySafely(Intent(Intent.ACTION_VIEW, "geo:0,0?q=$place".toUri()))
+    }
+
     Scaffold(
         topBar = {
             ContactDetailTopBar(
                 contact = contact,
                 pageOffset = pageOffset,
                 onBack = onBack,
-                onCall = {
-                    val intent = Intent(Intent.ACTION_DIAL).apply {
-                        data = "tel:${contact.phone}".toUri()
-                    }
-                    context.startActivity(intent)
-                },
-                onEmail = {
-                    val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = "mailto:${contact.email}".toUri()
-                        putExtra(
-                            Intent.EXTRA_SUBJECT,
-                            context.getString(R.string.email_subject, contact.fullName)
-                        )
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.email_body))
-                    }
-                    context.startActivity(intent)
-                },
+                onCall = dial,
+                onEmail = writeEmail,
                 onShare = {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -164,20 +170,25 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                 Spacer(modifier = Modifier.height(24.dp))
 
                 val infoList = listOf(
-                    Pair(Icons.Filled.Email, contact.email),
-                    Pair(Icons.Filled.Phone, contact.phone),
-                    Pair(Icons.Filled.LocationOn, "${contact.city}, ${contact.country}")
+                    InfoLine(Icons.Filled.Email, contact.email, stringResource(R.string.intent_email_action), writeEmail),
+                    InfoLine(Icons.Filled.Phone, contact.phone, stringResource(R.string.intent_call_action), dial),
+                    InfoLine(
+                        Icons.Filled.LocationOn,
+                        "${contact.city}, ${contact.country}",
+                        stringResource(R.string.intent_map_action),
+                        openMap
+                    )
                 )
                 Column(
                     modifier = Modifier
                         .offset(x = infoOffsetX)
                 ) {
-                    infoList.forEachIndexed { index, (icon, info) ->
+                    infoList.forEach { line ->
                         val alpha by animateFloatAsState(
                             targetValue = if (pageOffset.absoluteValue < 0.5f) 1f else 0f
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        ContactInfoRow(icon, info, alpha)
+                        ContactInfoRow(line.icon, line.text, alpha, line.actionLabel, line.onClick)
                     }
                 }
 
@@ -208,5 +219,21 @@ private fun registeredAgo(date: LocalDate): String {
         stringResource(R.string.contact_registered_recently)
     } else {
         pluralStringResource(R.plurals.contact_registered_years_ago, years, years)
+    }
+}
+
+private class InfoLine(
+    val icon: ImageVector,
+    val text: String,
+    val actionLabel: String,
+    val onClick: () -> Unit
+)
+
+/** Starts [intent], or tells the user when no installed app can handle it. */
+private fun Context.startActivitySafely(intent: Intent) {
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(this, getString(R.string.intent_no_app), Toast.LENGTH_SHORT).show()
     }
 }
