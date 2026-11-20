@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
 import com.kev.lydia.ui.details.RegisteredDate
@@ -137,7 +138,12 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = contact.avatarUrl,
+                    model = ImageRequest.Builder(context)
+                        .data(contact.avatarUrl)
+                        .memoryCacheKey(contact.avatarUrl)
+                        // Shows the list's bitmap at once instead of an empty circle.
+                        .placeholderMemoryCacheKey(contact.avatarUrl)
+                        .build(),
                     contentDescription = stringResource(R.string.contact_avatar_desc),
                     modifier = Modifier
                         .size((150 * avatarScale).dp)

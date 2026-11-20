@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.kev.domain.model.Contact
 
 @Composable
@@ -54,9 +53,10 @@ fun ContactCard(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(contact.avatarUrl)
                     .crossfade(true)
+                    // Same cache key as the detail avatar, which shows this bitmap while it loads.
+                    .memoryCacheKey(contact.avatarUrl)
                     .placeholder(android.R.drawable.progress_indeterminate_horizontal)
                     .error(android.R.drawable.ic_menu_report_image)
-                    .transformations(CircleCropTransformation())
                     .build(),
                 contentDescription = stringResource(com.kev.lydia.R.string.contact_avatar_desc),
                 contentScale = ContentScale.Crop,
