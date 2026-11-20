@@ -9,6 +9,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -56,3 +58,7 @@ fun LydiaTheme(
         content = content
     )
 }
+/** Detail page tints matching the current color scheme (light or dark). */
+@Composable
+fun contactTints(): List<Color> =
+    if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) ContactTintsDark else ContactTintsLight

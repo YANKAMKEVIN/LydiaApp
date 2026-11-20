@@ -58,7 +58,7 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
     val animatedBg = Brush.verticalGradient(
         colors = listOf(
             bgColor.copy(alpha = 0.8f + 0.2f * (1f - pageOffset.absoluteValue)),
-            Color.White
+            MaterialTheme.colorScheme.surface
         )
     )
 

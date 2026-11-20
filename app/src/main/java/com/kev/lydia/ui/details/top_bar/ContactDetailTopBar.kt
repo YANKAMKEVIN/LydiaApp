@@ -126,7 +126,7 @@ fun ContactDetailTopBar(
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.Transparent,
-            titleContentColor = Color.Black,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
         )
     )
 }

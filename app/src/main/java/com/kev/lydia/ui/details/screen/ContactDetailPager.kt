@@ -5,9 +5,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.kev.domain.model.Contact
 import com.kev.lydia.ui.pageOffsetFor
+import com.kev.lydia.ui.theme.contactTints
 
 
 @Composable
@@ -17,10 +17,7 @@ fun ContactDetailPager(
     onBack: () -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = startIndex, pageCount = { contacts.size })
-    val contactColors = listOf(
-        Color(0xFFE0F7FA), Color(0xFFFFF3E0), Color(0xFFE8F5E9),
-        Color(0xFFFFEBEE), Color(0xFFF3E5F5)
-    )
+    val contactColors = contactTints()
 
     HorizontalPager(
         state = pagerState,
