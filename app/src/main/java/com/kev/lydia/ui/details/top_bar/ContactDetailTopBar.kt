@@ -1,12 +1,10 @@
 package com.kev.lydia.ui.details.top_bar
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -24,16 +22,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
+import com.kev.lydia.ui.components.ContactAvatar
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,12 +53,11 @@ fun ContactDetailTopBar(
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = rememberAsyncImagePainter(contact.avatarUrl),
-                    contentDescription = context.getString(R.string.contact_avatar_desc),
+                ContactAvatar(
+                    fullName = contact.fullName,
+                    avatarUrl = contact.avatarUrl,
                     modifier = Modifier
                         .size((36 * avatarScale).dp)
-                        .clip(CircleShape)
                         .alpha(avatarAlpha)
                 )
                 Spacer(modifier = Modifier.width(8.dp))

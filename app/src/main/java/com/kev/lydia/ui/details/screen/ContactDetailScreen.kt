@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -45,10 +44,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
+import com.kev.lydia.ui.components.ContactAvatar
 import com.kev.lydia.ui.details.RegisteredDate
 import com.kev.lydia.ui.details.components.ContactInfoRow
 import com.kev.lydia.ui.details.components.InfoCard
@@ -137,18 +135,13 @@ fun ContactDetailScreen(contact: Contact, onBack: () -> Unit, pageOffset: Float,
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(contact.avatarUrl)
-                        .memoryCacheKey(contact.avatarUrl)
-                        // Shows the list's bitmap at once instead of an empty circle.
-                        .placeholderMemoryCacheKey(contact.avatarUrl)
-                        .build(),
-                    contentDescription = stringResource(R.string.contact_avatar_desc),
+                ContactAvatar(
+                    fullName = contact.fullName,
+                    avatarUrl = contact.avatarUrl,
+                    useCachedPlaceholder = true,
                     modifier = Modifier
                         .size((150 * avatarScale).dp)
                         .scale(avatarScale)
-                        .clip(CircleShape)
                         .alpha(avatarAlpha)
                         .shadow(10.dp, CircleShape)
                 )
