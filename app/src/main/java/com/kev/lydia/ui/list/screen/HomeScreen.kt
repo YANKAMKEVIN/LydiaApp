@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import com.kev.lydia.ui.list.components.ContactList
 import com.kev.lydia.ui.list.components.ContactListPlaceholder
 import com.kev.lydia.ui.list.components.banner.OfflineBanner
 import com.kev.lydia.ui.list.components.state.EmptyContactsScreen
+import com.kev.lydia.ui.list.components.state.EmptyFavoritesScreen
 import com.kev.lydia.ui.list.components.state.ErrorScreen
 import com.kev.lydia.ui.list.components.top_bar.HomeTopBar
 import com.kev.lydia.ui.navigation.LydiaRoutes
@@ -40,7 +42,9 @@ fun HomeRoute(
     isOffline: State<Boolean>,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val contacts = viewModel.contacts.collectAsLazyPagingItems()
+    val showFavoritesOnly by viewModel.showFavoritesOnly.collectAsState()
+    val contacts = (if (showFavoritesOnly) viewModel.favoriteContacts else viewModel.contacts)
+        .collectAsLazyPagingItems()
     var searchQuery by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
     var previousOffline by remember { mutableStateOf(isOffline.value) }
@@ -50,17 +54,15 @@ fun HomeRoute(
         isOffline = isOffline.value,
         searchQuery = searchQuery,
         isSearching = isSearching,
+        showFavoritesOnly = showFavoritesOnly,
+        onToggleFavoritesOnly = viewModel::toggleFavoritesOnly,
         onSearchQueryChange = { searchQuery = it },
         onSearchToggle = {
             if (isSearching) searchQuery = ""
             isSearching = !isSearching
         },
         onContactClick = { clickedContact, filteredList ->
-            val index = filteredList.indexOf(clickedContact)
-            navController.currentBackStackEntry?.savedStateHandle?.set(
-                "contacts",
-                filteredList
-            )
+            val index = viewModel.openContact(clickedContact, filteredList)
             navController.navigate(LydiaRoutes.detail(index))
         }
     )
@@ -83,7 +85,9 @@ fun HomeScreen(
     isOffline: Boolean,
     onSearchQueryChange: (String) -> Unit,
     onSearchToggle: () -> Unit,
-    onContactClick: (Contact, List<Contact>) -> Unit
+    onContactClick: (Contact, List<Contact>) -> Unit,
+    showFavoritesOnly: Boolean = false,
+    onToggleFavoritesOnly: () -> Unit = {},
 ) {
 
     Scaffold(
@@ -93,7 +97,9 @@ fun HomeScreen(
                     searchQuery = searchQuery,
                     onSearchQueryChange = onSearchQueryChange,
                     isSearching = isSearching,
-                    onSearchToggle = onSearchToggle
+                    onSearchToggle = onSearchToggle,
+                    showFavoritesOnly = showFavoritesOnly,
+                    onToggleFavoritesOnly = onToggleFavoritesOnly
                 )
                 OfflineBanner(isOffline)
             }
@@ -110,6 +116,10 @@ fun HomeScreen(
                 contacts.itemCount == 0 && contacts.loadState.refresh is LoadState.Loading -> {
                     ContactListPlaceholder()
                 }
+
+                // The favourites come from the cache only: no network error, just nothing starred yet.
+                showFavoritesOnly && contacts.itemCount == 0 ->
+                    EmptyFavoritesScreen(onShowAll = onToggleFavoritesOnly)
 
                 contacts.itemCount == 0 && contacts.loadState.refresh is LoadState.Error -> {
                     val error = contacts.loadState.refresh as LoadState.Error

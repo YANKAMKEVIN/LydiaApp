@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kev.domain.model.Contact
 import com.kev.lydia.ui.components.ContactAvatar
+import com.kev.lydia.ui.components.sharedAvatar
 
 @Composable
 fun ContactCard(
@@ -63,7 +64,9 @@ fun ContactCard(
             ContactAvatar(
                 fullName = contact.fullName,
                 avatarUrl = contact.avatarUrl,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier
+                    .sharedAvatar(contact.id)
+                    .size(64.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {

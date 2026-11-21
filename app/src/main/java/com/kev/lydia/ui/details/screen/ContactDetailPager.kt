@@ -27,7 +27,9 @@ private const val KEY_PAGER_HINT_SHOWN = "pager_hint_shown"
 fun ContactDetailPager(
     contacts: List<Contact>,
     startIndex: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    favoriteIds: Set<String> = emptySet(),
+    onToggleFavorite: (Contact) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(initialPage = startIndex, pageCount = { contacts.size })
     val contactColors = contactTints()
@@ -52,8 +54,11 @@ fun ContactDetailPager(
         modifier = Modifier.fillMaxSize()
     ) { page ->
         val pageOffset = pagerState.pageOffsetFor(page)
+        val contact = contacts[page]
         ContactDetailScreen(
-            contact = contacts[page],
+            contact = contact,
+            isFavorite = contact.id in favoriteIds,
+            onToggleFavorite = { onToggleFavorite(contact) },
             position = page + 1,
             total = contacts.size,
             onBack = onBack,

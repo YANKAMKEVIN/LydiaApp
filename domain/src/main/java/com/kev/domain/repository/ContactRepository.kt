@@ -18,4 +18,13 @@ interface ContactRepository {
      */
     suspend fun fetchContacts(): Flow<PagingData<Contact>>
 
+    /** Paged favourite contacts, from the local cache only (no network request). */
+    suspend fun fetchFavoriteContacts(): Flow<PagingData<Contact>>
+
+    /** Ids of the favourite contacts. */
+    fun observeFavoriteIds(): Flow<Set<String>>
+
+    /** Adds the contact [contactId] to the favourites, or removes it. */
+    suspend fun setFavorite(contactId: String, favorite: Boolean)
+
 }

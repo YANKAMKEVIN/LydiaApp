@@ -22,6 +22,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
+import com.kev.lydia.ui.filterByQuery
 import com.kev.lydia.ui.list.components.state.EmptySearchScreen
 import kotlinx.coroutines.delay
 
@@ -38,10 +39,7 @@ fun ContactList(
     onContactClick: (Contact, List<Contact>) -> Unit,
     onClearSearch: () -> Unit
 ) {
-    val filteredItems =
-        contacts.itemSnapshotList.items.filter {
-            it.fullName.contains(searchQuery, ignoreCase = true)
-        }
+    val filteredItems = contacts.itemSnapshotList.items.filterByQuery(searchQuery)
 
     if (searchQuery.isNotEmpty()) {
         if (filteredItems.isEmpty()) {

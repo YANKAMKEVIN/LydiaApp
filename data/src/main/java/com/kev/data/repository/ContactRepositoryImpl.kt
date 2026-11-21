@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.kev.data.datasource.local.ContactDatabase
+import com.kev.data.datasource.local.FavoriteEntity
 import com.kev.data.datasource.remote.ContactDataSource
 import com.kev.data.datasource.remote.ContactRemoteMediator
 import com.kev.data.mapper.ContactMapper.toDomain
@@ -43,4 +44,21 @@ class ContactRepositoryImpl @Inject constructor(
             pagingSourceFactory = { contactDatabase.contactDao.pagingSource() },
         ).flow.map { it.map { entity -> entity.toDomain() } }
 
+    /** Favourites come from the cache only: no RemoteMediator, so no network request. */
+    override suspend fun fetchFavoriteContacts(): Flow<PagingData<Contact>> =
+        Pager(
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = { contactDatabase.favoriteDao.favoriteContactsPagingSource() },
+        ).flow.map { it.map { entity -> entity.toDomain() } }
+
+    override fun observeFavoriteIds(): Flow<Set<String>> =
+        contactDatabase.favoriteDao.observeIds().map { it.toSet() }
+
+    override suspend fun setFavorite(contactId: String, favorite: Boolean) {
+        if (favorite) {
+            contactDatabase.favoriteDao.add(FavoriteEntity(contactId))
+        } else {
+            contactDatabase.favoriteDao.remove(contactId)
+        }
+    }
 }

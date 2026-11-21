@@ -10,6 +10,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +45,9 @@ fun ContactDetailTopBar(
     onBack: () -> Unit,
     onCall: () -> Unit,
     onEmail: () -> Unit,
-    onShare: () -> Unit
+    onShare: () -> Unit,
+    isFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
 ) {
     val avatarAlpha by animateFloatAsState(targetValue = 1f - 0.6f * pageOffset.absoluteValue)
     val avatarScale by animateFloatAsState(targetValue = 1f - 0.15f * pageOffset.absoluteValue)
@@ -89,6 +93,20 @@ fun ContactDetailTopBar(
             }
         },
         actions = {
+            IconButton(
+                onClick = onToggleFavorite,
+                modifier = Modifier
+                    .scale(iconScale)
+                    .alpha(iconAlpha)
+            ) {
+                Icon(
+                    if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                    contentDescription = context.getString(
+                        if (isFavorite) R.string.favorite_remove_action else R.string.favorite_add_action
+                    ),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
             IconButton(
                 onClick = onCall,
                 modifier = Modifier

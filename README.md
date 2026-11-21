@@ -16,6 +16,7 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Animations & UX](#animations--ux)
+- [Tests](#tests)
 - [Screenshots](#screenshots)
 - [Future Improvements](#future-improvements)
 
@@ -30,6 +31,8 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
   - Avatar, full name, username, age, email, phone, city, country, registration date.
   - Swipe between contacts horizontally using a **pager**.
   - Animated transitions between contacts.
+  - The avatar flies from the list card to the detail screen (shared element transition, Navigation Compose 2.9).
+- **Favorites**: star a contact from its detail screen and list only the starred ones with the **Favorites** filter. Favorites are stored in Room (their own table, kept when the contacts are refreshed; database version 4 with a migration from version 3).
 - **Interactive actions**:
   - Directly call or email a contact.
   - Share contact information via Android’s sharing intents.
@@ -37,8 +40,10 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
   - Automatic refresh when returning online.
   - Offline banner indicating current connection state.
 - **Animations & placeholders**:
-  - Lottie animations for loading placeholders.
+  - Shimmering skeleton cards while the first page loads, Lottie animations for the empty and error screens.
+  - Pull-to-refresh on the list.
   - Smooth fade and scale animations for avatar and info cards on detail screens.
+- **Light and dark themes** with a brand colour scheme.
 
 ---
 
@@ -87,7 +92,7 @@ git clone <repo-url>
 ```
 
 2. Open in **Android Studio**.
-3. Make sure you have **Kotlin 1.9+** and **Compose 1.5+**.
+3. The project uses **Kotlin 2.1**, **AGP 8.12** and the **Compose BOM 2025.08** (JDK 17+ to run Gradle).
 4. Build the project.
 5. Run the app on an emulator or device.
 
@@ -98,6 +103,7 @@ git clone <repo-url>
 - Browse the contact list.
 - Search locally by name using the search bar.
 - Tap a contact to view details.
+- Tap the star on a contact to add it to your favorites, and the **Favorites** chip to list only them.
 - Swipe horizontally to navigate between contacts.
 - Call, email, or share contact info directly from the detail screen.
 - Offline banner indicates connection status, and contacts remain accessible.
@@ -128,10 +134,20 @@ com.kev.lydia
 
 ## Animations & UX
 
-- Lottie animations for placeholders and loading states.
+- Skeleton placeholders while loading, Lottie animations for the empty and error states.
 - Smooth scaling and fading of avatars in detail screen.
 - Swiping between contacts with animated transitions.
 - Dynamic background gradients and info card animations.
+
+---
+
+## Tests
+
+```bash
+./gradlew :app:testDebugUnitTest   # JVM unit tests (ViewModels, search, mediator errors, UI state helpers,
+                                   # favorites DAO and the 3 -> 4 migration on a real SQLite through JDBC)
+./gradlew :data:testDebugUnitTest :domain:testDebugUnitTest   # Robolectric tests (Room DAOs, mapper, mediator)
+```
 
 ---
 
@@ -149,6 +165,4 @@ com.kev.lydia
 
 ## Future Improvements
 
-- Add favorites functionality.
-- Dark mode support.
-- Unit and UI tests for full coverage.
+- Compose UI tests for the list and detail screens.
