@@ -55,6 +55,7 @@ import androidx.core.net.toUri
 import com.kev.domain.model.Contact
 import com.kev.lydia.R
 import com.kev.lydia.ui.components.ContactAvatar
+import com.kev.lydia.ui.components.sharedAvatar
 import com.kev.lydia.ui.details.RegisteredDate
 import com.kev.lydia.ui.details.components.ContactInfoRow
 import com.kev.lydia.ui.details.components.InfoCard
@@ -157,6 +158,7 @@ fun ContactDetailScreen(
                     avatarUrl = contact.avatarUrl,
                     useCachedPlaceholder = true,
                     modifier = Modifier
+                        .sharedAvatar(contact.id)
                         .size((150 * avatarScale).dp)
                         .scale(avatarScale)
                         .alpha(avatarAlpha)

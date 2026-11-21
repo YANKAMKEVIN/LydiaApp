@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    // Declared on its own (hilt-navigation-compose only brings 2.5.1): 2.7+ exposes the
+    // AnimatedContentScope of each destination, needed for the avatar shared element transition.
+    implementation(libs.androidx.navigation.compose)
 
     // Paging
     implementation(libs.androidx.paging.compose)
