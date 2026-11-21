@@ -20,6 +20,16 @@ class HomeViewModel @Inject constructor(
     private val _contacts = MutableStateFlow(PagingData.Companion.empty<Contact>())
     val contacts: StateFlow<PagingData<Contact>> = _contacts
 
+    /**
+     * Contacts shown by the detail pager, as they were listed (and filtered) when one was tapped.
+     *
+     * Kept in memory only: putting the whole list in a SavedStateHandle wrote it into the activity's
+     * saved state, which grows with every loaded page and can exceed the Binder limit
+     * (TransactionTooLargeException) when the app goes to the background on the detail screen.
+     */
+    var openedContacts: List<Contact> = emptyList()
+        private set
+
     init {
         viewModelScope.launch {
             getContactsListUseCase().cachedIn(viewModelScope)
@@ -27,5 +37,11 @@ class HomeViewModel @Inject constructor(
                     _contacts.value = pagingData
                 }
         }
+    }
+
+    /** Remembers [contacts] for the detail pager and returns the page to open for [clicked]. */
+    fun openContact(clicked: Contact, contacts: List<Contact>): Int {
+        openedContacts = contacts.toList()
+        return openedContacts.indexOf(clicked).coerceAtLeast(0)
     }
 }

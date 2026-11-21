@@ -56,11 +56,7 @@ fun HomeRoute(
             isSearching = !isSearching
         },
         onContactClick = { clickedContact, filteredList ->
-            val index = filteredList.indexOf(clickedContact)
-            navController.currentBackStackEntry?.savedStateHandle?.set(
-                "contacts",
-                filteredList
-            )
+            val index = viewModel.openContact(clickedContact, filteredList)
             navController.navigate(LydiaRoutes.detail(index))
         }
     )
