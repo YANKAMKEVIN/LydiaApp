@@ -31,6 +31,7 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
   - Avatar, full name, username, age, email, phone, city, country, registration date.
   - Swipe between contacts horizontally using a **pager**.
   - Animated transitions between contacts.
+  - The avatar flies from the list card to the detail screen (shared element transition, Navigation Compose 2.9).
 - **Interactive actions**:
   - Directly call or email a contact.
   - Share contact information via Android’s sharing intents.
@@ -163,4 +164,3 @@ com.kev.lydia
 
 - Add favorites functionality.
 - Compose UI tests for the list and detail screens.
-- Shared element transition of the avatar between the list and the detail (needs Navigation Compose 2.7+).
