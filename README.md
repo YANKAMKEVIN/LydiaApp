@@ -16,6 +16,7 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Animations & UX](#animations--ux)
+- [Tests](#tests)
 - [Screenshots](#screenshots)
 - [Future Improvements](#future-improvements)
 
@@ -37,8 +38,10 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
   - Automatic refresh when returning online.
   - Offline banner indicating current connection state.
 - **Animations & placeholders**:
-  - Lottie animations for loading placeholders.
+  - Shimmering skeleton cards while the first page loads, Lottie animations for the empty and error screens.
+  - Pull-to-refresh on the list.
   - Smooth fade and scale animations for avatar and info cards on detail screens.
+- **Light and dark themes** with a brand colour scheme.
 
 ---
 
@@ -87,7 +90,7 @@ git clone <repo-url>
 ```
 
 2. Open in **Android Studio**.
-3. Make sure you have **Kotlin 1.9+** and **Compose 1.5+**.
+3. The project uses **Kotlin 2.1**, **AGP 8.12** and the **Compose BOM 2025.08** (JDK 17+ to run Gradle).
 4. Build the project.
 5. Run the app on an emulator or device.
 
@@ -128,10 +131,19 @@ com.kev.lydia
 
 ## Animations & UX
 
-- Lottie animations for placeholders and loading states.
+- Skeleton placeholders while loading, Lottie animations for the empty and error states.
 - Smooth scaling and fading of avatars in detail screen.
 - Swiping between contacts with animated transitions.
 - Dynamic background gradients and info card animations.
+
+---
+
+## Tests
+
+```bash
+./gradlew :app:testDebugUnitTest   # JVM unit tests (ViewModels, search, mediator errors, UI state helpers)
+./gradlew :data:testDebugUnitTest :domain:testDebugUnitTest   # Robolectric tests (Room DAOs, mapper, mediator)
+```
 
 ---
 
@@ -150,5 +162,5 @@ com.kev.lydia
 ## Future Improvements
 
 - Add favorites functionality.
-- Dark mode support.
-- Unit and UI tests for full coverage.
+- Compose UI tests for the list and detail screens.
+- Shared element transition of the avatar between the list and the detail (needs Navigation Compose 2.7+).
