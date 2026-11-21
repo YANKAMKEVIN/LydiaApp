@@ -30,7 +30,11 @@ class DataSourceModule {
             context,
             ContactDatabase::class.java,
             "contacts.db"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .addMigrations(ContactDatabase.MIGRATION_3_4)
+            // Older versions (before 3) had no migration: their cache is rebuilt from the API.
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
 }

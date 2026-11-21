@@ -72,7 +72,9 @@ fun ContactDetailScreen(
     total: Int,
     onBack: () -> Unit,
     pageOffset: Float,
-    bgColor: Color
+    bgColor: Color,
+    isFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -111,6 +113,8 @@ fun ContactDetailScreen(
                 total = total,
                 pageOffset = pageOffset,
                 onBack = onBack,
+                isFavorite = isFavorite,
+                onToggleFavorite = onToggleFavorite,
                 onCall = dial,
                 onEmail = writeEmail,
                 onShare = {

@@ -32,6 +32,7 @@ The app uses the **RandomUser API v1.3** ([https://randomuser.me/](https://rando
   - Swipe between contacts horizontally using a **pager**.
   - Animated transitions between contacts.
   - The avatar flies from the list card to the detail screen (shared element transition, Navigation Compose 2.9).
+- **Favorites**: star a contact from its detail screen and list only the starred ones with the **Favorites** filter. Favorites are stored in Room (their own table, kept when the contacts are refreshed; database version 4 with a migration from version 3).
 - **Interactive actions**:
   - Directly call or email a contact.
   - Share contact information via Android’s sharing intents.
@@ -102,6 +103,7 @@ git clone <repo-url>
 - Browse the contact list.
 - Search locally by name using the search bar.
 - Tap a contact to view details.
+- Tap the star on a contact to add it to your favorites, and the **Favorites** chip to list only them.
 - Swipe horizontally to navigate between contacts.
 - Call, email, or share contact info directly from the detail screen.
 - Offline banner indicates connection status, and contacts remain accessible.
@@ -142,7 +144,8 @@ com.kev.lydia
 ## Tests
 
 ```bash
-./gradlew :app:testDebugUnitTest   # JVM unit tests (ViewModels, search, mediator errors, UI state helpers)
+./gradlew :app:testDebugUnitTest   # JVM unit tests (ViewModels, search, mediator errors, UI state helpers,
+                                   # favorites DAO and the 3 -> 4 migration on a real SQLite through JDBC)
 ./gradlew :data:testDebugUnitTest :domain:testDebugUnitTest   # Robolectric tests (Room DAOs, mapper, mediator)
 ```
 
@@ -162,5 +165,4 @@ com.kev.lydia
 
 ## Future Improvements
 
-- Add favorites functionality.
 - Compose UI tests for the list and detail screens.

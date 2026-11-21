@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,7 +61,9 @@ private fun LydiaGraph(navController: NavHostController, isOffline: State<Boolea
             val startIndex = backStackEntry.arguments?.getInt(LydiaRoutes.DETAIL_ARG) ?: 0
             // The list screen's ViewModel holds the contacts that were listed when one was tapped.
             val homeEntry = remember(backStackEntry) { navController.getBackStackEntry(LydiaRoutes.HOME) }
-            val contacts: List<Contact> = hiltViewModel<HomeViewModel>(homeEntry).openedContacts
+            val homeViewModel = hiltViewModel<HomeViewModel>(homeEntry)
+            val contacts: List<Contact> = homeViewModel.openedContacts
+            val favoriteIds by homeViewModel.favoriteIds.collectAsState()
             if (contacts.isEmpty()) {
                 // Nothing to show (e.g. the process was recreated on this screen): back to the list.
                 LaunchedEffect(Unit) { navController.popBackStack() }
@@ -68,7 +72,9 @@ private fun LydiaGraph(navController: NavHostController, isOffline: State<Boolea
                     ContactDetailPager(
                         contacts = contacts,
                         startIndex = startIndex.coerceIn(0, contacts.lastIndex),
-                        onBack = { navController.popBackStack() }
+                        onBack = { navController.popBackStack() },
+                        favoriteIds = favoriteIds,
+                        onToggleFavorite = homeViewModel::toggleFavorite
                     )
                 }
             }

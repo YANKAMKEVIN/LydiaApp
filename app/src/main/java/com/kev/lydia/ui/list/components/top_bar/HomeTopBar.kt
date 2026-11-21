@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +46,9 @@ fun HomeTopBar(
     searchQuery: String = "",
     isSearching: Boolean = false,
     onSearchQueryChange: (String) -> Unit,
-    onSearchToggle: () -> Unit
+    onSearchToggle: () -> Unit,
+    showFavoritesOnly: Boolean = false,
+    onToggleFavoritesOnly: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -115,6 +122,19 @@ fun HomeTopBar(
             }
 
             if (!isSearching) {
+                // "Favorites" filter: only the starred contacts are listed while it is selected.
+                FilterChip(
+                    selected = showFavoritesOnly,
+                    onClick = onToggleFavoritesOnly,
+                    label = { Text(context.getString(R.string.list_filter_favorites)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (showFavoritesOnly) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    }
+                )
                 IconButton(onClick = onSearchToggle) {
                     Icon(
                         imageVector = Icons.Default.Search,

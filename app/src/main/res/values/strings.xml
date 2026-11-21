@@ -40,6 +40,14 @@
     <string name="error_screen_network_message">Unable to load contacts. Check your internet connection and try again.</string>
     <string name="error_screen_unknown_message">Unknown error</string>
 
+    <!-- Favorites -->
+    <string name="list_filter_favorites">Favorites</string>
+    <string name="favorite_add_action">Add to favorites</string>
+    <string name="favorite_remove_action">Remove from favorites</string>
+    <string name="empty_favorites_title">No favorites yet</string>
+    <string name="empty_favorites_subtitle">Tap the star on a contact to find it here.</string>
+    <string name="empty_favorites_action">Show all contacts</string>
+
     <!-- Top bar -->
     <string name="details_top_bar_title">Profile</string>
     <string name="details_top_bar_position">%1$d / %2$d</string>
